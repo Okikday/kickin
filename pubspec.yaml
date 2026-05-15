@@ -1,7 +1,7 @@
 name: kickin
 description: "coming soon!"
 # A Flutter package that makes developments easier by providing commonly used utilities and widgets with just simple initialization.
-version: 0.0.1
+version: 0.0.1-dev.1
 homepage: https://github.com/okikday
 repository: https://github.com/okikday/kickin
 
