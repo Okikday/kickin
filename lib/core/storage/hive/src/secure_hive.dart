@@ -21,7 +21,7 @@ class SecureHive<T> {
 
   bool get isInitialized => _secureBox != null;
 
-  SecureHive({this.secureBoxName = defaultSecureBoxName, this.secureCipherKey = defaultSecureBoxName});
+  SecureHive({this.secureBoxName = kSecureBoxName, this.secureCipherKey = kSecureBoxName});
 
   Future<void> initialize() async {
     final cipherKey = await _secureStorage.read(key: secureCipherKey);
@@ -33,7 +33,7 @@ class SecureHive<T> {
       await _secureStorage.write(key: secureBoxName, value: base64Encode(decodedCipherKey));
     }
 
-    _secureBox = await Hive.openBox(defaultSecureBoxName, encryptionCipher: HiveAesCipher(decodedCipherKey));
+    _secureBox = await Hive.openBox(kSecureBoxName, encryptionCipher: HiveAesCipher(decodedCipherKey));
   }
 
   Future<void> setData({required String key, required T value}) async {

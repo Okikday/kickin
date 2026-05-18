@@ -7,16 +7,16 @@ part of 'api_base.dart';
 ///
 /// Example:
 /// ```dart
-/// class ChatsApi extends ApiInterface<Map<String, dynamic>> { // Map<String, dynamic> is the type of the cache for this API client
+/// class ChatsApi extends kickin.Api<Map<String, dynamic>> { // Map<String, dynamic> is the type of the cache for this API client
 ///   ChatsApi(super.parent);
 /// }
 /// ```
 ///
 /// Use this for API modules that need access to the shared base
 /// configuration.
-abstract class ApiInterface<CacheType> {
+abstract class Api<CacheType> {
   final ApiBase _parent;
-  ApiInterface(this._parent);
+  Api(this._parent);
 
   final id = ApiBase._incrementId;
 

@@ -89,7 +89,7 @@ class SomeAsyncNotifier<T> extends _AsyncBaseNotifier<T> {
 /// [In] is how the data get's stored
 /// [Out] is how the data is output
 class PersistentNotifier<In, Out> extends AsyncNotifier<Out> {
-  static final _hive = AppHive(boxName: defaultRiverpodCacheBoxName);
+  static final _hive = AppHive(boxName: kRiverpodCacheBoxName);
   final String _key;
   final Out _defaultValue;
   final bool? isUpdateNotifying;

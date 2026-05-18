@@ -1,6 +1,6 @@
 library;
 
-export 'core/apis/api_base.dart' show ApiInterface, ApiBase, ApiKeyEnum, ApiKeyEnumExtension;
+export 'core/apis/api_base.dart' show Api, ApiBase, ApiKeyEnum, ApiKeyEnumExtension;
 export 'core/base/base.dart'
     show
         AsyncNotifierX,

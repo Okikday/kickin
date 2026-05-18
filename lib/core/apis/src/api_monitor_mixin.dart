@@ -1,6 +1,6 @@
 part of '../api_base.dart';
 
-mixin _ApiMonitor on ApiInterface {
+mixin _ApiMonitor on Api {
   void addListener(void Function() listener) {
     // Implementation for listening to API activity monitoring
   }

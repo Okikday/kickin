@@ -8,7 +8,7 @@ part 'src/api_monitor_mixin.dart';
 // part 'src/api_cache_mixin.dart';
 part 'src/api_key_enum.dart';
 
-part 'api_interface.dart';
+part 'api.dart';
 
 typedef Any = dynamic;
 
@@ -27,7 +27,7 @@ typedef Any = dynamic;
 ///
 /// Example:
 /// ```dart
-/// class MainApi extends ApiBase {
+/// class MainApi extends kickin.ApiBase {
 ///   static final on = MainApi._();
 ///   MainApi._();
 ///
@@ -38,7 +38,6 @@ typedef Any = dynamic;
 ///
 /// Use a single shared instance for each API root to avoid cache or state
 /// conflicts between clients.
-///
 
 final _apiKeys = <ApiKeyEnum, String>{};
 
@@ -62,11 +61,12 @@ abstract class ApiBase {
   /// [withApiKeys]: A map of API keys to be registered. The keys should implement the [ApiKeyEnum] interface. Remember to register keys for all APIs you intend to use in the system.
   ///
   /// [monitorActivities]: If true, enables monitoring of API activities (only in debug mode).
+  /// Don't use syncCacheToStorage yet, not yet implemented!
   Future<void> intialize({
     required String baseUrl,
     Map<ApiKeyEnum, String>? withApiKeys,
     bool monitorActivities = kDebugMode,
-    String cacheBoxName = defaultApiCacheBoxName,
+    String cacheBoxName = kApiCacheBoxName,
     bool syncCacheToStorage = false,
   }) async {
     _enabledMonitoring = monitorActivities;

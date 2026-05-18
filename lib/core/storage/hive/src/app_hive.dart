@@ -14,9 +14,9 @@ class AppHive<T> {
 
   bool get isInitialized => _box != null;
 
-  AppHive({this.boxName = defaultAppBoxName});
+  AppHive({this.boxName = kAppBoxName});
 
-  Future<void> initialize() async => _box = await Hive.openBox(defaultAppBoxName);
+  Future<void> initialize() async => _box = await Hive.openBox(kAppBoxName);
 
   Future<void> setData({required String key, required T value}) async {
     if (_box == null || _box!.isOpen == false) {
