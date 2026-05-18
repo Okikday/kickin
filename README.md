@@ -12,7 +12,7 @@ Features
 
 Quick install
 
-Add to your `pubspec.yaml`:
+Add the package to your app dependencies:
 
 ```yaml
 dependencies:
@@ -38,35 +38,14 @@ KickinHive.on.app.setData(key: key, value: value);
 
 API summary
 
-The library re-exports a compact public API from `lib/kickin.dart`.
+The public API is intentionally compact and centered around a few high-value areas:
 
-- **core/apis** (`lib/core/apis/api_base.dart`)
-  - `ApiBase` — base initializer for API systems and API key registration.
-  - `Api` — lightweight API interface mixing in caching and monitoring.
-  - `ApiKeyEnum` + `ApiKeyEnumExtension.key` — register and read API keys.
-
-- **core/base** (`lib/core/base/base.dart`)
-  - Extensions: `NumDurationExtension`, `WidgetExtension`, `StringExtension`, `ColorsExtension`, `ExtensionOnContext`, `ProviderExtension`, `AsyncProviderExtension`, `RefExtensions`, `WidgetRefExtensions`, `NotifierX`, `AsyncNotifierX`, `ExtensionOnDuration` — handy getters and helpers for common patterns (durations, spacing, context, provider read/watch, etc.).
-  - Mixins: `IsScrolledNotifierMixin`, `PageControllerMixin`, `ScrollOffsetNotifierMixin`, `ProviderWarmupMixin` — reusable stateful behaviours.
-
-- **core/state_management** (`lib/core/state_management/riverpod/riverpod.dart`)
-  - `Absorb`, `AbsorbWatch`, `AbsorbRead` — concise consumer helpers to reduce UI boilerplate.
-  - Notifiers: Pre-built standard notifiers (`IntNotifier`, `StringNotifier`, `BoolNotifier`...) and `PersistentNotifier` for synced offline storage.
-
-- **core/storage** (`lib/core/storage/hive/kickin_hive.dart`)
-  - `KickinHive<T>` — unified wrapper to effortlessly manage application and secure storage boxes.
-
-- **core/utilities**
-  - `Result<T>` (`lib/core/utilities/result.dart`) — lightweight success/loading/error wrapper with helpers `tryRun`, `tryRunAsync`, `doNext`, `then`.
-  - `SmartIsolate`, `SmartIsolateContinuous`, `SmartIsolateAccess`, `SmartIsolateException`, and `WorkPriority` (`lib/core/utilities/smart_isolate.dart`) — easy-to-use isolate helpers with progress, priority queues and persistent worker isolates.
-
-- **widgets**
-  - `AnimatedSizing` — small AnimatedSize wrapper with `fast`, `normal`, `slow` factories.
-  - `ScaleGestureWrapper` — clickable widget with scale animation and configurable callbacks.
-  - `TopPadding`, `BottomPadding` — quick helpers that respect safe areas and keyboard inset.
-  - `AppText` — compact text widget applying theme defaults.
-  - `SmoothListView` / `SmoothCustomScrollView` — desktop-optimized smooth scrolling list and custom scroll view (with `SmoothScrollMode`, `ScrollIntensity` and `SmoothScrollPhysics`).
-  - `AdaptiveImage` / `ImageFromMemory` and exported `FilePath` model — show local or network images with graceful fallback and caching.
+- Core APIs: `ApiBase`, `Api`, `ApiKeyEnum`
+- Base helpers: extensions for context, durations, strings, numbers, providers, and widgets; plus reusable mixins
+- State management: `Absorb`, standard notifiers, `WatchNotifier`, and `PersistentNotifier`
+- Storage: `KickinHive`, `AppHive`, `SecureHive`
+- Utilities: `Result`, `SmartIsolate`, `SmartIsolateContinuous`, `SmartIsolateAccess`, `SmartIsolateException`, `WorkPriority`
+- Widgets: `AnimatedSizing`, `ScaleGestureWrapper`, `TopPadding`, `BottomPadding`, `AppText`, `SmoothListView`, `SmoothCustomScrollView`, `AdaptiveImage`, `ImageFromMemory`, and `FilePath`
 
 Examples
 
@@ -201,23 +180,30 @@ SmoothListView.builder(
 
 Documentation & examples
 
-This README highlights the root-level API. For implementation details and more examples, see the source files in:
-- [lib/kickin.dart](lib/kickin.dart#L1)
-- [lib/core/base](lib/core/base)
-- [lib/core/state_management/riverpod](lib/core/state_management/riverpod)
+Use the root import for the public surface:
+
+```dart
+import 'package:kickin/kickin.dart';
+```
+
+The examples above cover the main patterns. For implementation details, keep exploring the package API from there.
 
 Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+See the changelog for version history.
 
 License
 
-This project is available under the terms of the LICENSE file.
+This project is available under the license terms.
 
 Maintainers
 
-<a href="https://github.com/okikday">
-  <img src="https://github.com/okikday.png" width="50" height="50" style="border-radius: 50%;" alt="okikday" />
-</a>
-<br/>
-**[okikday](https://github.com/okikday)**
+<div align="center">
+  <div style="display:inline-block;padding:10px;border-radius:999px;background:linear-gradient(135deg, rgba(15,23,42,0.08), rgba(59,130,246,0.18));box-shadow:0 10px 30px rgba(15,23,42,0.12);">
+    <a href="https://github.com/okikday" aria-label="okikday on GitHub">
+      <img src="https://github.com/okikday.png" width="96" height="96" style="display:block;border-radius:999px;object-fit:cover;border:3px solid rgba(255,255,255,0.85);" alt="okikday" />
+    </a>
+  </div>
+  <div style="margin-top:10px;font-weight:700;">okikday</div>
+  <div style="font-size:0.95em;opacity:0.75;">Maintainer</div>
+</div>
