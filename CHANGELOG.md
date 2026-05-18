@@ -1,3 +1,8 @@
+## 0.0.1-dev.5
+- Refactored the API structure by renaming and reorganizing classes and removing the unused interface.
+- Improved API documentation and internal cleanup, including removal of the unused cache mixin.
+- Updated the package surface and tests to match the new API layout.
+
 ## 0.0.1-dev.4
 - Improved exporting from library
 ## 0.0.1-dev.3
