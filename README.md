@@ -1,6 +1,6 @@
 # Kickin — Practical Flutter utilities and widgets (In Progress)
 
-Kickin is a comprehensive toolkit designed to strip away boilerplate and simplify common, repetitive tasks in Flutter development. It packs robust utility classes, powerful extensions, and opinionated wrappers around popular community tools (like state management and persistency) to give you better developer ergonomics and predictable behaviour right out of the box.
+Kickin is a comprehensive toolkit designed to strip away boilerplate and simplify common, repetitive tasks in Flutter development. It packs robust utility classes, powerful extensions, and opinionated wrappers around popular community tools (like state management and persistency) to give you better developer ergonomics and predictable behaviour right out of the box. This means you don't have to start setting up the folders and copying files from old project to new project, just pub get [kickin].
 
 Features
 - Boilerplate-free architecture: Helpers and mixins that tackle daily repetitive code
