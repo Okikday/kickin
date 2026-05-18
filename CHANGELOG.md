@@ -1,3 +1,7 @@
+## 0.0.1-dev.4
+- Improved exporting from library
+## 0.0.1-dev.3
+- Update docs
 ## 0.0.1-dev.2
 - Introduced a some sets of utilities, extensions, and widgets to eliminate boilerplate.
 - **State Management**: Added `Absorb` helpers, standard `Notifiers`, and `PersistentNotifier` for Riverpod and Hive integration.
