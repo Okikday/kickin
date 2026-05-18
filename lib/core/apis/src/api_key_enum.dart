@@ -7,8 +7,6 @@ part of '../api_base.dart';
 /// googleMaps,
 /// }
 /// ```
-abstract class ApiKeyEnum implements Enum {}
-
-extension ApiKeyEnumExtension on ApiKeyEnum {
+abstract class ApiKeyEnum implements Enum {
   String get key => _apiKeys.containsKey(this) ? _apiKeys[this]! : throw Exception('API key not found for $this');
 }

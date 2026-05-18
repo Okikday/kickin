@@ -1,16 +1,31 @@
 part of 'api_base.dart';
 
-/// Interface for API implementations. Any class that implements this interface can be used as an API in the system.
-/// Example usage:
+/// Base class for concrete API clients owned by an [ApiBase].
+///
+/// Subclasses receive their parent [ApiBase] through the constructor and can
+/// read shared state such as [baseUrl] and per-client cache values from it.
+///
+/// Example:
 /// ```dart
-/// class MyApi implements ApiInterface {
-/// ...
+/// class ChatsApi extends ApiInterface<Map<String, dynamic>> { // Map<String, dynamic> is the type of the cache for this API client
+///   ChatsApi(super.parent);
 /// }
 /// ```
-abstract class Api with _ApiMonitor, _ApiCache {
-  const Api();
+///
+/// Use this for API modules that need access to the shared base
+/// configuration.
+abstract class ApiInterface<CacheType> {
+  final ApiBase _parent;
+  ApiInterface(this._parent);
 
-  void listener() {
-    // Doing nothing
-  }
+  final id = ApiBase._incrementId;
+
+  String get baseUrl => _parent._baseUrl;
+
+  CacheType? get cache => _parent._getCache(id);
+  void setCache(CacheType value) => _parent._setCache(id, value);
+
+  // void listener() {
+  //   // Doing nothing
+  // }
 }
