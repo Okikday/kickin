@@ -1,4 +1,4 @@
-part of '../api_base.dart';
+part of 'api_base.dart';
 
 /// Interface for API implementations. Any class that implements this interface can be used as an API in the system.
 /// Example usage:
@@ -7,7 +7,7 @@ part of '../api_base.dart';
 /// ...
 /// }
 /// ```
-abstract class Api with _ApiMonitor {
+abstract class Api with _ApiMonitor, _ApiCache {
   const Api();
 
   void listener() {

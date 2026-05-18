@@ -1,31 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
 
-part 'src/api_monitoring_mixin.dart';
-part 'src/api_interface.dart';
+part 'src/api_monitor_mixin.dart';
+part 'src/api_cache_mixin.dart';
+part 'src/api_key_enum.dart';
 
-/// Base class for API keys. Each API key should implement this interface to be used in the API system.
-/// Example usage:
-/// ```dart
-/// enum MyApiKeys implements ApiKeyEnum {
-/// googleMaps,
-/// }
-/// ```
-abstract class ApiKeyEnum implements Enum {}
-
-extension ApiKeyEnumExtension on ApiKeyEnum {
-  String get key => _apiKeys.containsKey(this) ? _apiKeys[this]! : throw Exception('API key not found for $this');
-}
+part 'api_interface.dart';
 
 /// =================================================
 /// Private members
 /// =================================================
 final _apiKeys = <ApiKeyEnum, String>{};
+final Map<String, dynamic> _cacheMap = {};
 bool _enabledMonitoring = kDebugMode;
 
 /// =================================================
-/// Classes
+/// ApiBase
 /// =================================================
 abstract class ApiBase {
   const ApiBase();
@@ -33,7 +26,11 @@ abstract class ApiBase {
   /// [withApiKeys]: A map of API keys to be registered. The keys should implement the [ApiKeyEnum] interface. Remember to register keys for all APIs you intend to use in the system.
   ///
   /// [monitorActivities]: If true, enables monitoring of API activities (only in debug mode).
-  Future<void> intialize({Map<ApiKeyEnum, String>? withApiKeys, bool monitorActivities = kDebugMode}) async {
+  Future<void> intialize({
+    Map<ApiKeyEnum, String>? withApiKeys,
+    bool monitorActivities = kDebugMode,
+    String cacheBoxName = defaultApiCacheBoxName,
+  }) async {
     _enabledMonitoring = monitorActivities;
     if (withApiKeys != null && withApiKeys.isNotEmpty) {
       _apiKeys.addAll(withApiKeys);
@@ -41,7 +38,8 @@ abstract class ApiBase {
     if (_enabledMonitoring) {
       // Start monitoring API activities
     }
+    if (!Hive.isBoxOpen(cacheBoxName)) {
+      // Setup the cache box
+    }
   }
-
-  /// Retrieves the API key associated with the given [apiKeyId]. Throws an exception if the API key is not found.
 }
