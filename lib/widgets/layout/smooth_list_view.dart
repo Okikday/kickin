@@ -50,13 +50,13 @@ enum ScrollIntensity {
 /// )
 /// ```
 class SmoothListView extends StatelessWidget {
-  /// The mode determining when smooth scroll is applied
+  /// The mode determining when smooth scroll is applied. Defaults to [SmoothScrollMode.auto].
   final SmoothScrollMode mode;
 
-  /// The intensity/feel of the scrolling
+  /// The intensity/feel of the scrolling. Defaults to [ScrollIntensity.medium].
   final ScrollIntensity intensity;
 
-  /// Custom physics for power users (overrides intensity)
+  /// Custom physics for power users. If provided, this overrides [intensity].
   final SmoothScrollPhysics? customPhysics;
 
   // Standard ListView parameters

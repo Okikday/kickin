@@ -437,6 +437,7 @@ mixin SmartIsolateAccess {
 
 // ─── Exception ────────────────────────────────────────────────────────────────
 
+/// Thrown when isolate spawn or execution fails inside the SmartIsolate helpers.
 class SmartIsolateException implements Exception {
   final String message;
   final StackTrace? stackTrace;

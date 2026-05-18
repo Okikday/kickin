@@ -20,6 +20,10 @@ bool _enabledMonitoring = kDebugMode;
 /// =================================================
 /// ApiBase
 /// =================================================
+/// Base class for API implementations in this package.
+///
+/// Provides shared initialization for API keys, optional activity monitoring,
+/// and cache setup. Extend this to implement concrete APIs consumed by the app.
 abstract class ApiBase {
   const ApiBase();
 

@@ -1,5 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+/// Simple holder for a possible `url` and `local` path alternative.
+///
+/// Use [resolve] to pick a preferred path (local first by default) and get a
+/// normalized, trimmed string along with whether it's a local resource.
 class FilePath {
   final String? url;
   final String? local;

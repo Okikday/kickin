@@ -9,6 +9,10 @@ import 'package:kickin/core/utilities/result.dart';
 
 const _secureStorage = FlutterSecureStorage();
 
+/// A small wrapper around Hive that uses a platform secure storage-backed
+/// encryption key (via `flutter_secure_storage`) to provide encrypted boxes.
+///
+/// Typical usage: call `initialize()` before `getData`/`setData`.
 class SecureHive<T> {
   final String secureBoxName;
   final String secureCipherKey;

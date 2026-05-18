@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// A lightweight text widget that applies sensible defaults from the theme.
+///
+/// Wraps [Text] and provides convenient parameters for common styling needs,
+/// plus an optional tooltip when text is truncated.
 class AppText extends StatelessWidget {
   final String data;
   final TextStyle? style;

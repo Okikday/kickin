@@ -5,6 +5,10 @@ import 'package:flutter_riverpod/misc.dart';
 /// Use [ref.context] to access the [BuildContext context]
 typedef AbsorbBuilder<OutT> = Widget Function(WidgetRef ref, OutT value, Widget? _);
 
+/// Small helper API for embedding provider `watch` and `read` builders inline.
+///
+/// Provides convenience static methods `Absorb.watch` and `Absorb.read` which
+/// return lightweight widgets that expose a `ref` and provider value to a builder.
 class Absorb {
   static Widget watch<OutT>(
     ProviderListenable<OutT> listenable, {

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kickin/core/base/src/extensions/extensions.dart';
 
+/// Adds top padding equal to the system status bar inset plus an optional extra height.
+///
+/// Returns either a padded child or a sized box with the computed height.
 class TopPadding extends StatelessWidget {
   final double? withHeight;
   final Widget? child;
@@ -18,6 +21,11 @@ class TopPadding extends StatelessWidget {
   }
 }
 
+/// Adds bottom padding equal to the system bottom inset (keyboard, nav bar)
+/// plus an optional extra height.
+///
+/// When [useKeyboardPadding] is true, additional padding is included for
+/// the keyboard's inset so UI elements sit above the keyboard.
 class BottomPadding extends StatelessWidget {
   final double? withHeight;
   final bool useKeyboardPadding;

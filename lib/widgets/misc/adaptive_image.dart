@@ -96,6 +96,11 @@ class AdaptiveImage extends StatelessWidget {
   }
 }
 
+/// Displays an image from raw memory bytes with optional sizing and a fallback.
+///
+/// Use this when you have image data as `Uint8List` (for example, loaded from
+/// an isolate or network response) and want a simple widget that renders it
+/// with error handling and a frame placeholder.
 class ImageFromMemory extends ConsumerWidget {
   const ImageFromMemory({
     super.key,

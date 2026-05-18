@@ -1,19 +1,41 @@
 import 'package:flutter/material.dart';
 
+/// A wrapper widget that provides a scaling "squish" effect when pressed.
+///
+/// This is typically used to create Apple/iOS style bouncy buttons, where the
+/// button shrinks slightly when pressed down and bounces back when released.
 class ScaleGestureWrapper extends StatefulWidget {
+  /// The border radius used for the [InkWell] splash effect.
   final double borderRadius;
-  // default size, and then when clicked
+
+  /// The scale factors to animate between: (normal scale, pressed scale).
+  /// Defaults to `(1.0, 0.9)`, meaning it shrinks to 90% of its size when pressed.
   final (double from, double to) scaleBetween;
+
   final void Function(TapDownDetails details)? onTapDown;
 
-  /// Can delay when calling onTapUp to delay when action takes place
+  /// The callback triggered when the pointer stops contacting the screen.
+  /// You can use [delayReverseDuration] to delay the release animation.
   final void Function(TapUpDetails details)? onTapUp;
+
+  /// The callback triggered when a tap is correctly resolved.
   final VoidCallback? onTap;
+
+  /// The callback triggered when a long press is recognized.
   final VoidCallback? onLongPress;
+
+  /// The duration of the scale animation. Defaults to [Durations.medium2].
   final Duration animationDuration;
+
+  /// Optional delay before the widget scales back to its original size after release.
   final Duration? delayReverseDuration;
+
+  /// The curve used for the scale animation.
   final Curve? curve;
+
+  /// The widget below this widget in the tree.
   final Widget child;
+
   const ScaleGestureWrapper({
     super.key,
     this.scaleBetween = (1.0, 0.9),
@@ -55,13 +77,14 @@ class _ScaleGestureWrapperState extends State<ScaleGestureWrapper> {
           scale: value ? widget.scaleBetween.$2 : widget.scaleBetween.$1,
           duration: widget.animationDuration,
           curve: widget.curve ?? Curves.decelerate,
-          child: InnerScaleClickWrapper(
+          child: _InnerScaleClickWrapper(
             scaleClickNotifier: scaleClickNotifier,
             borderRadius: widget.borderRadius,
             onTapDown: widget.onTapDown,
             onTapUp: widget.onTapUp,
             onTap: widget.onTap,
             onLongPress: widget.onLongPress,
+            delayReverseDuration: widget.delayReverseDuration,
             child: widget.child,
           ),
         );
@@ -70,9 +93,12 @@ class _ScaleGestureWrapperState extends State<ScaleGestureWrapper> {
   }
 }
 
-class InnerScaleClickWrapper extends StatelessWidget {
-  const InnerScaleClickWrapper({
-    super.key,
+/// Internal widget that wires gesture callbacks to the scale notifier.
+///
+/// Responsible for forwarding tap/long-press events and updating the
+/// provided [ValueNotifier] so the outer widget can animate the scale.
+class _InnerScaleClickWrapper extends StatelessWidget {
+  const _InnerScaleClickWrapper({
     required this.scaleClickNotifier,
     this.borderRadius = 0,
     this.onTapDown,

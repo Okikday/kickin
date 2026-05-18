@@ -2,6 +2,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kickin/core/storage/hive/src/app_hive.dart';
 import 'package:kickin/core/storage/hive/src/secure_hive.dart';
 
+/// Top-level helper to initialize and access app and secure Hive boxes.
+///
+/// Use `KickinHive.on.initialize()` early in your app start-up to ensure
+/// the underlying Hive boxes are ready for use.
 class KickinHive<T> {
   static final on = KickinHive._();
   KickinHive._();

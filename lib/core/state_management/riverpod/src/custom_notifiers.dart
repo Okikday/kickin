@@ -26,23 +26,28 @@ abstract class _BaseNotifier<T> extends Notifier<T> {
 //=============================================
 // PRIMITIVE TYPE NOTIFIERS
 //=============================================
+/// A simple `int` notifier with convenience defaults.
 class IntNotifier extends _BaseNotifier<int> {
   IntNotifier([super._defaultKey = 0]);
 }
 
+/// A simple `double` notifier with convenience defaults.
 class DoubleNotifier extends _BaseNotifier<double> {
   DoubleNotifier([super._defaultKey = 0.0]);
 }
 
+/// A simple `String` notifier with convenience defaults.
 class StringNotifier extends _BaseNotifier<String> {
   StringNotifier([super._defaultKey = '']);
 }
 
+/// A boolean notifier with a `toggle()` helper.
 class BoolNotifier extends _BaseNotifier<bool> {
   BoolNotifier([super._defaultKey = false]);
   void toggle() => state = !state;
 }
 
+/// Generic notifier for arbitrary types with simple `set`/`update` helpers.
 class SomeNotifier<T> extends _BaseNotifier<T> {
   SomeNotifier(super._defaultKey);
 }
@@ -50,6 +55,7 @@ class SomeNotifier<T> extends _BaseNotifier<T> {
 //=============================================
 // ASYNC* BASE NOTIFIER
 //=============================================
+/// A notifier backed by a [Stream].
 class WatchNotifier<T> extends StreamNotifier<T> {
   final Stream<T> Function() _streamFactory;
   WatchNotifier(this._streamFactory);
@@ -71,6 +77,7 @@ abstract class _AsyncBaseNotifier<T> extends AsyncNotifier<T> {
   void set(T value) => state = AsyncData(value);
 }
 
+/// Async notifier that exposes an initial default value and can be set later.
 class SomeAsyncNotifier<T> extends _AsyncBaseNotifier<T> {
   SomeAsyncNotifier(super._defaultKey);
 }

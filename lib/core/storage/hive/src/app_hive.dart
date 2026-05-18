@@ -3,6 +3,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
 import 'package:kickin/core/utilities/result.dart';
 
+/// Simple helper around a Hive box for application-level storage.
+///
+/// Provides convenience methods for `initialize`, `setData`, `getData`, and
+/// watching changes by key.
 class AppHive<T> {
   final String boxName;
 
