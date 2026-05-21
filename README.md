@@ -2,13 +2,15 @@
 
 Kickin is a comprehensive toolkit designed to strip away boilerplate and simplify common, repetitive tasks in Flutter development. It packs robust utility classes, powerful extensions, and opinionated wrappers around popular community tools (like state management and persistency) to give you better developer ergonomics and predictable behaviour right out of the box. This means you don't have to start setting up the folders and copying files from old project to new project, just pub get [kickin].
 
+also for users of [https://pub.dev/packages/custom_widgets_toolkit]
+
 Features
 - Boilerplate-free architecture: Helpers and mixins that tackle daily repetitive code
 - Wrappers for popular tools: Ergonomic APIs for state management (e.g. Riverpod) and storage libraries (e.g. Hive)
-- Result wrapper for safe and predictable async operations
-- Smart isolate helpers for background work with progress reporting
+- KResult wrapper for safe and predictable async operations
+- KIsolate helpers for background work with progress reporting
 - Handy extensions for `BuildContext`, `num`, `String`, providers and durations
-- Useful widgets: `AnimatedSizing`, `ScaleGestureWrapper`, `SmoothListView`, `AdaptiveImage`, and more
+- Useful widgets: `KAnimatedSizing`, `KScaleGestureWrapper`, `KSmoothListView`, `KAdaptiveImage`, `KScaffold`, and more
 
 Quick install
 
@@ -18,7 +20,7 @@ Add the package to your app dependencies:
 dependencies:
   flutter:
     sdk: flutter
-  kickin: 0.0.1-dev.5
+  kickin: 0.0.1-dev.6
 ```
 
 Then import the package root API where needed:
@@ -32,8 +34,8 @@ Getting started
 Initialize the persistent storage driver (e.g. Hive) if you intend to use the built-in storage features:
 
 ```dart
-await KickinHive.on.initialize();
-KickinHive.on.app.setData(key: key, value: value);
+await KHive.on.initialize();
+KHive.on.app.setData(key: key, value: value);
 ```
 
 API summary
@@ -42,10 +44,11 @@ The public API is intentionally compact and centered around a few high-value are
 
 - Core APIs: `ApiBase`, `Api`, `ApiKeyEnum`
 - Base helpers: extensions for context, durations, strings, numbers, providers, and widgets; plus reusable mixins
-- State management: `Absorb`, standard notifiers, `WatchNotifier`, and `PersistentNotifier`
-- Storage: `KickinHive`, `AppHive`, `SecureHive`
-- Utilities: `Result`, `SmartIsolate`, `SmartIsolateContinuous`, `SmartIsolateAccess`, `SmartIsolateException`, `WorkPriority`
-- Widgets: `AnimatedSizing`, `ScaleGestureWrapper`, `TopPadding`, `BottomPadding`, `AppText`, `SmoothListView`, `SmoothCustomScrollView`, `AdaptiveImage`, `ImageFromMemory`, and `FilePath`
+- State management: `KAbsorber`, `KAbsorbRead`, `KAbsorbWatch`, `KWatchNotifier`, and `KCachedNotifier`
+- Storage: `KHive`
+- Utilities: `KResult`, `KIsolate`, `KIsolateContinuous`, `KIsolateAccess`, `KIsolateException`, `KWorkPriority`
+- Motion and layout: `KCurves`, `KSpacing`
+- Widgets: `KAnimatedSizing`, `KScaleGestureWrapper`, `KTopPadding`, `KBottomPadding`, `KText`, `KSmoothListView`, `SmoothCustomScrollView`, `KAdaptiveImage`, `ImageFromMemory`, `KFilePath`, and `KScaffold`
 
 Examples
 
@@ -65,6 +68,30 @@ Widget build(BuildContext c) => Column(
 final isDark = context.isDarkMode;
 final screenWidth = context.deviceWidth;
 final topPadding = context.topPadding;
+
+// Shared spacing and motion tokens
+final gutter = KSpacing.md;
+final easing = KCurves.fastInSlowOut;
+```
+
+App shell and scaffold
+
+```dart
+KScaffold(
+  title: 'Home',
+  footer: Padding(
+    padding: EdgeInsets.all(KSpacing.md),
+    child: KText('Built with Kickin'),
+  ),
+  body: Center(
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: KCurves.fastInSlowOut,
+      padding: EdgeInsets.all(KSpacing.lg),
+      child: KText('Fast, consistent UI shells'),
+    ),
+  ),
+)
 ```
 
 State Management & Offline Storage
@@ -88,9 +115,9 @@ final userProvider = NotifierProvider<SomeNotifier<User?>, User?>(() => SomeNoti
 // ref.read(counterProvider.notifier).set(5);
 // ref.read(counterProvider.notifier).update((state) => state + 1);
 
-// 3. Surgical rebuilds using Absorb without ConsumerWidget boilerplate
+// 3. Surgical rebuilds using KAbsorber without ConsumerWidget boilerplate
 Widget build(BuildContext context) {
-  return Absorb.watch(
+  return KAbsorber.watch(
     themeProvider,
     builder: (ref, theme, _) => MaterialApp(
       themeMode: theme, // Now responsive to changes
@@ -105,8 +132,8 @@ Safe Async Operations (Result)
 Avoid endless `try-catch` blocks and effectively manage data/loading/error states.
 
 ```dart
-Future<Result<User>> fetchUser(String id) async {
-  return Result.tryRunAsync(() async {
+Future<KResult<User>> fetchUser(String id) async {
+  return KResult.tryRunAsync(() async {
     final response = await api.getUser(id);
     return User.fromJson(response);
   }).then((user) async {
@@ -122,7 +149,7 @@ Run intense workloads safely away from the main thread without stuttering the UI
 
 ```dart
 // Execute right away with progress reporting 
-final compressedBytes = await SmartIsolate.run<Uint8List, double, Uint8List>(
+final compressedBytes = await KIsolate.run<Uint8List, double, Uint8List>(
   (imageBytes, emit) async {
     emit(0.2); // Notify UI: 20% done
     final processed = await heavyImageCompression(imageBytes);
@@ -134,7 +161,7 @@ final compressedBytes = await SmartIsolate.run<Uint8List, double, Uint8List>(
 );
 
 // Or create a continuous background worker with a priority queue
-final imageWorker = await SmartIsolateContinuous.spawn<ImageTask, ImageResult>(
+final imageWorker = await KIsolateContinuous.spawn<ImageTask, ImageResult>(
   (register) async {
     final decoder = await setupHeavyModel(); // Run once initialization
     register((task, respond) => respond(decoder.process(task)));
@@ -148,15 +175,15 @@ Widgets & UI interactions
 
 ```dart
 // Bouncy, squishy, and hyper-interactive buttons out of the box
-ScaleGestureWrapper(
+KScaleGestureWrapper(
   onTapUp: (details) => navigateToDetails(),
   scaleBetween: (1.0, 0.92),
-  child: AnimatedSizing.fast(
+  child: KAnimatedSizing.fast(
     child: Card(
       elevation: 4,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: AppText('Squish me!', fontWeight: FontWeight.bold),
+        child: KText('Squish me!', fontWeight: FontWeight.bold),
       ),
     ),
   ),
@@ -164,13 +191,13 @@ ScaleGestureWrapper(
 
 // Mac/Windows-like buttery-smooth momentum scrolling on desktop platforms.
 // Automatically falls back to native physics on mobile!
-SmoothListView.builder(
+KSmoothListView.builder(
   mode: SmoothScrollMode.auto,
   intensity: ScrollIntensity.slow,
   itemCount: 100,
   itemBuilder: (context, index) => ListTile(
-    leading: AdaptiveImage(
-      path: FilePath(url: 'https://...', local: 'assets/fallback.png'),
+    leading: KAdaptiveImage(
+      path: KFilePath(url: 'https://...', local: 'assets/fallback.png'),
       fallbackWidget: const Icon(Icons.error),
     ),
     title: Text('Item $index'),

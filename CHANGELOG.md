@@ -1,3 +1,11 @@
+## 0.0.1-dev.6
+- Refactored the public API for consistency by prefixing core widgets and utilities with `K`.
+- Renamed isolate helpers to `KIsolate`, `KIsolateContinuous`, `KIsolateAccess`, and `KIsolateException`.
+- Added `KApiResponse` for wrapping and transforming API responses.
+- Added `KScaffold` for configurable app shells with built-in app bar and footer support.
+- Added shared motion and spacing tokens with `KCurves` and `KSpacing`.
+- Updated networking support to use `dio`.
+
 ## 0.0.1-dev.5
 - Refactored the API structure by renaming and reorganizing classes and removing the unused interface.
 - Improved API documentation and internal cleanup, including removal of the unused cache mixin.
