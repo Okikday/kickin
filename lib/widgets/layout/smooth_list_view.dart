@@ -9,7 +9,7 @@ import 'package:flutter/physics.dart';
 import 'package:flutter/scheduler.dart';
 
 /// Defines when smooth scrolling should be applied
-enum SmoothScrollMode {
+enum KSmoothScrollMode {
   /// Automatically enable smooth scroll on desktop platforms only
   auto,
 
@@ -18,7 +18,7 @@ enum SmoothScrollMode {
 }
 
 /// Defines the intensity/feel of the smooth scrolling
-enum ScrollIntensity {
+enum KScrollIntensity {
   /// Smooth, longer momentum (macOS-like feel)
   slow,
 
@@ -50,11 +50,11 @@ enum ScrollIntensity {
 /// )
 /// ```
 class KSmoothListView extends StatelessWidget {
-  /// The mode determining when smooth scroll is applied. Defaults to [SmoothScrollMode.auto].
-  final SmoothScrollMode mode;
+  /// The mode determining when smooth scroll is applied. Defaults to [KSmoothScrollMode.auto].
+  final KSmoothScrollMode mode;
 
-  /// The intensity/feel of the scrolling. Defaults to [ScrollIntensity.medium].
-  final ScrollIntensity intensity;
+  /// The intensity/feel of the scrolling. Defaults to [KScrollIntensity.medium].
+  final KScrollIntensity intensity;
 
   /// Custom physics for power users. If provided, this overrides [intensity].
   final SmoothScrollPhysics? customPhysics;
@@ -83,8 +83,8 @@ class KSmoothListView extends StatelessWidget {
   const KSmoothListView({
     super.key,
     required this.children,
-    this.mode = SmoothScrollMode.auto,
-    this.intensity = ScrollIntensity.slow,
+    this.mode = KSmoothScrollMode.auto,
+    this.intensity = KScrollIntensity.slow,
     this.customPhysics,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
@@ -169,8 +169,8 @@ class KSmoothListView extends StatelessWidget {
     Key? key,
     required IndexedWidgetBuilder itemBuilder,
     int? itemCount,
-    SmoothScrollMode mode = SmoothScrollMode.auto,
-    ScrollIntensity intensity = ScrollIntensity.slow,
+    KSmoothScrollMode mode = KSmoothScrollMode.auto,
+    KScrollIntensity intensity = KScrollIntensity.slow,
     SmoothScrollPhysics? customPhysics,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
@@ -256,8 +256,8 @@ class KSmoothListView extends StatelessWidget {
     required IndexedWidgetBuilder itemBuilder,
     required IndexedWidgetBuilder separatorBuilder,
     required int itemCount,
-    SmoothScrollMode mode = SmoothScrollMode.auto,
-    ScrollIntensity intensity = ScrollIntensity.slow,
+    KSmoothScrollMode mode = KSmoothScrollMode.auto,
+    KScrollIntensity intensity = KScrollIntensity.slow,
     SmoothScrollPhysics? customPhysics,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
@@ -340,8 +340,8 @@ class KSmoothListView extends StatelessWidget {
   static Widget custom({
     Key? key,
     required SliverChildDelegate childrenDelegate,
-    SmoothScrollMode mode = SmoothScrollMode.auto,
-    ScrollIntensity intensity = ScrollIntensity.slow,
+    KSmoothScrollMode mode = KSmoothScrollMode.auto,
+    KScrollIntensity intensity = KScrollIntensity.slow,
     SmoothScrollPhysics? customPhysics,
     double? cacheExtent,
     Clip clipBehavior = Clip.hardEdge,
@@ -411,8 +411,8 @@ class KSmoothListView extends StatelessWidget {
     return _shouldApplySmoothScrollStatic(mode);
   }
 
-  static bool _shouldApplySmoothScrollStatic(SmoothScrollMode mode) {
-    if (mode == SmoothScrollMode.disabled) return false;
+  static bool _shouldApplySmoothScrollStatic(KSmoothScrollMode mode) {
+    if (mode == KSmoothScrollMode.disabled) return false;
 
     return defaultTargetPlatform == TargetPlatform.windows;
   }
@@ -423,8 +423,8 @@ class KSmoothListView extends StatelessWidget {
 // ============================================================================
 
 class _SmoothListViewWrapper extends StatefulWidget {
-  final SmoothScrollMode mode;
-  final ScrollIntensity intensity;
+  final KSmoothScrollMode mode;
+  final KScrollIntensity intensity;
   final SmoothScrollPhysics? customPhysics;
   final List<Widget> children;
   final bool addAutomaticKeepAlives;
@@ -548,8 +548,8 @@ class _SmoothListViewWrapperState extends State<_SmoothListViewWrapper> with Sin
 }
 
 class _SmoothListViewBuilder extends StatefulWidget {
-  final SmoothScrollMode mode;
-  final ScrollIntensity intensity;
+  final KSmoothScrollMode mode;
+  final KScrollIntensity intensity;
   final SmoothScrollPhysics? customPhysics;
   final IndexedWidgetBuilder itemBuilder;
   final int? itemCount;
@@ -679,8 +679,8 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> with Sin
 }
 
 class _SmoothListViewSeparated extends StatefulWidget {
-  final SmoothScrollMode mode;
-  final ScrollIntensity intensity;
+  final KSmoothScrollMode mode;
+  final KScrollIntensity intensity;
   final SmoothScrollPhysics? customPhysics;
   final IndexedWidgetBuilder itemBuilder;
   final IndexedWidgetBuilder separatorBuilder;
@@ -810,8 +810,8 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> with
 }
 
 class _SmoothListViewCustom extends StatefulWidget {
-  final SmoothScrollMode mode;
-  final ScrollIntensity intensity;
+  final KSmoothScrollMode mode;
+  final KScrollIntensity intensity;
   final SmoothScrollPhysics? customPhysics;
   final SliverChildDelegate childrenDelegate;
   final double? cacheExtent;
@@ -947,12 +947,12 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> with Singl
 ///   ],
 /// )
 /// ```
-class SmoothCustomScrollView extends StatelessWidget {
+class KSmoothCustomScrollView extends StatelessWidget {
   /// The mode determining when smooth scroll is applied
-  final SmoothScrollMode mode;
+  final KSmoothScrollMode mode;
 
   /// The intensity/feel of the scrolling
-  final ScrollIntensity intensity;
+  final KScrollIntensity intensity;
 
   /// Custom physics for power users (overrides intensity)
   final SmoothScrollPhysics? customPhysics;
@@ -975,10 +975,10 @@ class SmoothCustomScrollView extends StatelessWidget {
   final String? restorationId;
   final Clip clipBehavior;
 
-  const SmoothCustomScrollView({
+  const KSmoothCustomScrollView({
     super.key,
-    this.mode = SmoothScrollMode.auto,
-    this.intensity = ScrollIntensity.slow,
+    this.mode = KSmoothScrollMode.auto,
+    this.intensity = KScrollIntensity.slow,
     this.customPhysics,
     this.scrollDirection = Axis.vertical,
     this.reverse = false,
@@ -1051,7 +1051,7 @@ class SmoothCustomScrollView extends StatelessWidget {
   }
 
   bool _shouldApplySmoothScroll() {
-    if (mode == SmoothScrollMode.disabled) return false;
+    if (mode == KSmoothScrollMode.disabled) return false;
 
     return defaultTargetPlatform == TargetPlatform.windows;
   }
@@ -1059,8 +1059,8 @@ class SmoothCustomScrollView extends StatelessWidget {
 
 /// Internal wrapper for smooth CustomScrollView
 class _SmoothCustomScrollViewWrapper extends StatefulWidget {
-  final SmoothScrollMode mode;
-  final ScrollIntensity intensity;
+  final KSmoothScrollMode mode;
+  final KScrollIntensity intensity;
   final SmoothScrollPhysics? customPhysics;
   final List<Widget> slivers;
   final Axis scrollDirection;
@@ -1187,7 +1187,7 @@ class SmoothScrollController {
   final ScrollController scrollController;
   final TickerProvider vsync;
 
-  ScrollIntensity _intensity;
+  KScrollIntensity _intensity;
   SmoothScrollPhysics? _customPhysics;
   bool _reverse;
 
@@ -1204,7 +1204,7 @@ class SmoothScrollController {
 
   SmoothScrollController({
     required this.scrollController,
-    required ScrollIntensity intensity,
+    required KScrollIntensity intensity,
     required SmoothScrollPhysics? customPhysics,
     required bool reverse,
     required this.vsync,
@@ -1221,7 +1221,7 @@ class SmoothScrollController {
   }
 
   void updateConfig({
-    required ScrollIntensity intensity,
+    required KScrollIntensity intensity,
     required SmoothScrollPhysics? customPhysics,
     required bool reverse,
   }) {
@@ -1355,7 +1355,7 @@ class SmoothScrollPhysics extends ScrollPhysics {
   const SmoothScrollPhysics({required this.config, super.parent});
 
   /// Creates physics from a scroll intensity preset
-  factory SmoothScrollPhysics.fromIntensity(ScrollIntensity intensity, ScrollPhysics? parent) {
+  factory SmoothScrollPhysics.fromIntensity(KScrollIntensity intensity, ScrollPhysics? parent) {
     return SmoothScrollPhysics(config: ScrollIntensityConfig.fromIntensity(intensity), parent: parent);
   }
 
@@ -1474,13 +1474,13 @@ class ScrollIntensityConfig {
   );
 
   /// Creates config from intensity enum
-  factory ScrollIntensityConfig.fromIntensity(ScrollIntensity intensity) {
+  factory ScrollIntensityConfig.fromIntensity(KScrollIntensity intensity) {
     switch (intensity) {
-      case ScrollIntensity.slow:
+      case KScrollIntensity.slow:
         return slow;
-      case ScrollIntensity.medium:
+      case KScrollIntensity.medium:
         return medium;
-      case ScrollIntensity.fast:
+      case KScrollIntensity.fast:
         return fast;
     }
   }

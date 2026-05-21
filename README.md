@@ -9,7 +9,7 @@ Features
 - Wrappers for popular tools: Ergonomic APIs for state management (e.g. Riverpod) and storage libraries (e.g. Hive)
 - KResult wrapper for safe and predictable async operations
 - KIsolate helpers for background work with progress reporting
-- Handy extensions for `BuildContext`, `num`, `String`, providers and durations
+- Handy extensions for `BuildContext`, `num`, `String`, providers, durations etc
 - Useful widgets: `KAnimatedSizing`, `KScaleGestureWrapper`, `KSmoothListView`, `KAdaptiveImage`, `KScaffold`, and more
 
 Quick install
@@ -20,7 +20,7 @@ Add the package to your app dependencies:
 dependencies:
   flutter:
     sdk: flutter
-  kickin: 0.0.1-dev.6
+  kickin: 0.0.1-dev.8
 ```
 
 Then import the package root API where needed:
@@ -48,7 +48,7 @@ The public API is intentionally compact and centered around a few high-value are
 - Storage: `KHive`
 - Utilities: `KResult`, `KIsolate`, `KIsolateContinuous`, `KIsolateAccess`, `KIsolateException`, `KWorkPriority`
 - Motion and layout: `KCurves`, `KSpacing`
-- Widgets: `KAnimatedSizing`, `KScaleGestureWrapper`, `KTopPadding`, `KBottomPadding`, `KText`, `KSmoothListView`, `SmoothCustomScrollView`, `KAdaptiveImage`, `ImageFromMemory`, `KFilePath`, and `KScaffold`
+- Widgets: `KAnimatedSizing`, `KScaleGestureWrapper`, `KTopPadding`, `KBottomPadding`, `KText`, `KSmoothListView`, `KSmoothCustomScrollView`, `KAdaptiveImage`, `ImageFromMemory`, `KFilePath`, and `KScaffold`
 
 Examples
 
@@ -77,6 +77,7 @@ final easing = KCurves.fastInSlowOut;
 App shell and scaffold
 
 ```dart
+KScaffold.appBarBuilder = someWidget;
 KScaffold(
   title: 'Home',
   footer: Padding(

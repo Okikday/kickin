@@ -1,3 +1,9 @@
+## 0.0.1-dev.8
+- Updated example app
+
+## 0.0.1-dev.7
+- Updated documentations
+
 ## 0.0.1-dev.6
 - Refactored the public API for consistency by prefixing core widgets and utilities with `K`.
 - Renamed isolate helpers to `KIsolate`, `KIsolateContinuous`, `KIsolateAccess`, and `KIsolateException`.
