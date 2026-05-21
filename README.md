@@ -98,9 +98,8 @@ State Management & Offline Storage
 
 ```dart
 // 1. A Notifier that auto-magically persists to local storage (Hive, etc.)
-class ThemeModeNotifier extends PersistentNotifier<String, ThemeMode> {
-  ThemeModeNotifier() : super(
-    'theme_mode_key', 
+class ThemeModeNotifier extends KCachedNotifier<String, ThemeMode> {
+  ThemeModeNotifier() : super( 
     ThemeMode.system,
     encode: (mode) => mode.name,
     decode: (raw) => ThemeMode.values.byName(raw ?? 'system'),

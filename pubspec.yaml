@@ -5,8 +5,8 @@ homepage: https://github.com/okikday
 repository: https://github.com/okikday/kickin
 
 environment:
-  sdk: ^3.11.5
-  flutter: ">=1.17.0"
+  sdk: ^3.9.5
+  flutter: ">=3.0.0"
 
 dependencies:
   cached_network_image: ^3.4.1
@@ -23,6 +23,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  lints: ^6.1.0
 
 flutter:
 
