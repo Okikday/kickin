@@ -27,38 +27,38 @@ abstract class _BaseNotifier<T> extends Notifier<T> {
 // PRIMITIVE TYPE NOTIFIERS
 //=============================================
 /// A simple `int` notifier with convenience defaults.
-class IntNotifier extends _BaseNotifier<int> {
-  IntNotifier([super._defaultKey = 0]);
+class KIntNotifier extends _BaseNotifier<int> {
+  KIntNotifier([super._defaultKey = 0]);
 }
 
 /// A simple `double` notifier with convenience defaults.
-class DoubleNotifier extends _BaseNotifier<double> {
-  DoubleNotifier([super._defaultKey = 0.0]);
+class KDoubleNotifier extends _BaseNotifier<double> {
+  KDoubleNotifier([super._defaultKey = 0.0]);
 }
 
 /// A simple `String` notifier with convenience defaults.
-class StringNotifier extends _BaseNotifier<String> {
-  StringNotifier([super._defaultKey = '']);
+class KStringNotifier extends _BaseNotifier<String> {
+  KStringNotifier([super._defaultKey = '']);
 }
 
 /// A boolean notifier with a `toggle()` helper.
-class BoolNotifier extends _BaseNotifier<bool> {
-  BoolNotifier([super._defaultKey = false]);
+class KBoolNotifier extends _BaseNotifier<bool> {
+  KBoolNotifier([super._defaultKey = false]);
   void toggle() => state = !state;
 }
 
 /// Generic notifier for arbitrary types with simple `set`/`update` helpers.
-class SomeNotifier<T> extends _BaseNotifier<T> {
-  SomeNotifier(super._defaultKey);
+class KSomeNotifier<T> extends _BaseNotifier<T> {
+  KSomeNotifier(super._defaultKey);
 }
 
 //=============================================
 // ASYNC* BASE NOTIFIER
 //=============================================
 /// A notifier backed by a [Stream].
-class WatchNotifier<T> extends StreamNotifier<T> {
+class KWatchNotifier<T> extends StreamNotifier<T> {
   final Stream<T> Function() _streamFactory;
-  WatchNotifier(this._streamFactory);
+  KWatchNotifier(this._streamFactory);
   @override
   Stream<T> build() => _streamFactory();
 }
@@ -78,8 +78,8 @@ abstract class _AsyncBaseNotifier<T> extends AsyncNotifier<T> {
 }
 
 /// Async notifier that exposes an initial default value and can be set later.
-class SomeAsyncNotifier<T> extends _AsyncBaseNotifier<T> {
-  SomeAsyncNotifier(super._defaultKey);
+class KSomeAsyncNotifier<T> extends _AsyncBaseNotifier<T> {
+  KSomeAsyncNotifier(super._defaultKey);
 }
 
 // ============================================================================
@@ -88,8 +88,8 @@ class SomeAsyncNotifier<T> extends _AsyncBaseNotifier<T> {
 
 /// [In] is how the data get's stored
 /// [Out] is how the data is output
-class PersistentNotifier<In, Out> extends AsyncNotifier<Out> {
-  static final _hive = AppHive(boxName: kRiverpodCacheBoxName);
+class KCachedNotifier<In, Out> extends AsyncNotifier<Out> {
+  static final _hive = KAppHive(boxName: kRiverpodCacheBoxName);
   final String _key;
   final Out _defaultValue;
   final bool? isUpdateNotifying;
@@ -101,16 +101,16 @@ class PersistentNotifier<In, Out> extends AsyncNotifier<Out> {
 
   Future<void> _writeLock = Future.value();
 
-  PersistentNotifier(this._key, this._defaultValue, {this.isUpdateNotifying, this.decode, this.encode});
+  KCachedNotifier(this._key, this._defaultValue, {this.isUpdateNotifying, this.decode, this.encode});
 
   @override
   Future<Out> build() async {
-    return (await Result.tryRunAsync<Out>(() async {
+    return (await KResult.tryRunAsync<Out>(() async {
               if (!_hive.isInitialized) await _hive.initialize();
               final data = await _hive.getData(key: _key);
               return decode?.call(data) ?? data as Out?;
             }))
-            .onError((e, [st]) => Result.error<Out>("Try using decode params to properly decode data from storage"))
+            .onError((e, [st]) => KResult.error<Out>("Try using decode params to properly decode data from storage"))
             .data ??
         _defaultValue;
   }
@@ -126,12 +126,12 @@ class PersistentNotifier<In, Out> extends AsyncNotifier<Out> {
     await set(value);
   }
 
-  Future<void> _scheduleWrite(Out value) async => await Result.tryRunAsync(
+  Future<void> _scheduleWrite(Out value) async => await KResult.tryRunAsync(
     () async => _writeLock = _writeLock.then((_) {
       final encoded = encode?.call(value) ?? value as In;
       return _hive.setData(key: _key, value: encoded);
     }),
-  ).onError((e, st) => Result.error("Try using the encode params: $e"));
+  ).onError((e, st) => KResult.error("Try using the encode params: $e"));
 
   @override
   bool updateShouldNotify(AsyncValue<Out> previous, AsyncValue<Out> next) =>

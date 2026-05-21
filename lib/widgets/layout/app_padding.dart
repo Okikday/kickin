@@ -4,10 +4,10 @@ import 'package:kickin/core/base/src/extensions/extensions.dart';
 /// Adds top padding equal to the system status bar inset plus an optional extra height.
 ///
 /// Returns either a padded child or a sized box with the computed height.
-class TopPadding extends StatelessWidget {
+class KTopPadding extends StatelessWidget {
   final double? withHeight;
   final Widget? child;
-  const TopPadding({super.key, this.withHeight, this.child});
+  const KTopPadding({super.key, this.withHeight, this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +26,11 @@ class TopPadding extends StatelessWidget {
 ///
 /// When [useKeyboardPadding] is true, additional padding is included for
 /// the keyboard's inset so UI elements sit above the keyboard.
-class BottomPadding extends StatelessWidget {
+class KBottomPadding extends StatelessWidget {
   final double? withHeight;
   final bool useKeyboardPadding;
   final Widget? child;
-  const BottomPadding({super.key, this.withHeight, this.useKeyboardPadding = false, this.child});
+  const KBottomPadding({super.key, this.withHeight, this.useKeyboardPadding = false, this.child});
 
   @override
   Widget build(BuildContext context) {

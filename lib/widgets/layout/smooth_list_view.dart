@@ -49,7 +49,7 @@ enum ScrollIntensity {
 ///   ),
 /// )
 /// ```
-class SmoothListView extends StatelessWidget {
+class KSmoothListView extends StatelessWidget {
   /// The mode determining when smooth scroll is applied. Defaults to [SmoothScrollMode.auto].
   final SmoothScrollMode mode;
 
@@ -80,7 +80,7 @@ class SmoothListView extends StatelessWidget {
   final int? semanticChildCount;
   final bool shrinkWrap;
 
-  const SmoothListView({
+  const KSmoothListView({
     super.key,
     required this.children,
     this.mode = SmoothScrollMode.auto,

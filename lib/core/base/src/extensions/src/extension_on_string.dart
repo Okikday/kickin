@@ -1,5 +1,5 @@
 part of '../extensions.dart';
 
-extension StringExtension on String {
+extension KStringExtension on String {
   Map get decodeJson => jsonDecode(this);
 }

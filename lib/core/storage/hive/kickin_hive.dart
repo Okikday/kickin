@@ -6,16 +6,16 @@ import 'package:kickin/core/storage/hive/src/secure_hive.dart';
 ///
 /// Use `KickinHive.on.initialize()` early in your app start-up to ensure
 /// the underlying Hive boxes are ready for use.
-class KickinHive<T> {
-  static final on = KickinHive._();
-  KickinHive._();
+class KHive<T> {
+  static final on = KHive._();
+  KHive._();
   static bool _hiveInitialized = false;
 
-  /// Make sure to initialize [KickinHive] before using
-  final app = AppHive<T>();
+  /// Make sure to initialize [KHive] before using
+  final app = KAppHive<T>();
 
-  /// Make sure to initialize [KickinHive] before using
-  final secure = SecureHive<T>();
+  /// Make sure to initialize [KHive] before using
+  final secure = KSecureHive<T>();
 
   /// If box was already opened, it does nothing. else, it opens the boxes marked as true
   Future<void> initialize({bool initApp = true, bool initSecure = true}) async {

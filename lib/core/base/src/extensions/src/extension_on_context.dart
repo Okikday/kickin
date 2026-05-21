@@ -1,6 +1,6 @@
 part of '../extensions.dart';
 
-extension ExtensionOnContext on BuildContext {
+extension KExtensionOnContext on BuildContext {
   BuildContext get context => this;
   ThemeData get theme => Theme.of(context);
   Color get scaffoldBackgroundColor => Theme.of(this).scaffoldBackgroundColor;

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 
-mixin ProviderWarmupMixin {
+mixin KProviderWarmupMixin {
   /// The Hub using this mixin must provide its Ref
   Ref get ref;
 

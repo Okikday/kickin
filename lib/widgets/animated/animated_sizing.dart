@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 ///
 /// This is a convenience wrapper around [AnimatedSize] that provides sensible defaults
 /// and factory constructors for different animation speeds.
-class AnimatedSizing extends StatelessWidget {
+class KAnimatedSizing extends StatelessWidget {
   /// The duration of the sizing animation.
   final Duration? duration;
 
@@ -14,21 +14,21 @@ class AnimatedSizing extends StatelessWidget {
   /// The widget below this widget in the tree.
   final Widget child;
 
-  const AnimatedSizing({super.key, this.duration, this.curve, required this.child});
+  const KAnimatedSizing({super.key, this.duration, this.curve, required this.child});
 
-  /// Creates an [AnimatedSizing] with a fast animation duration (400ms).
-  factory AnimatedSizing.fast({required Widget child}) {
-    return AnimatedSizing(duration: const Duration(milliseconds: 400), child: child);
+  /// Creates an [KAnimatedSizing] with a fast animation duration (400ms).
+  factory KAnimatedSizing.fast({required Widget child}) {
+    return KAnimatedSizing(duration: const Duration(milliseconds: 400), child: child);
   }
 
-  /// Creates an [AnimatedSizing] with a normal animation duration (700ms).
-  factory AnimatedSizing.normal({required Widget child}) {
-    return AnimatedSizing(child: child);
+  /// Creates an [KAnimatedSizing] with a normal animation duration (700ms).
+  factory KAnimatedSizing.normal({required Widget child}) {
+    return KAnimatedSizing(child: child);
   }
 
-  /// Creates an [AnimatedSizing] with a slow animation duration (1000ms).
-  factory AnimatedSizing.slow({required Widget child}) {
-    return AnimatedSizing(duration: const Duration(milliseconds: 1000), child: child);
+  /// Creates an [KAnimatedSizing] with a slow animation duration (1000ms).
+  factory KAnimatedSizing.slow({required Widget child}) {
+    return KAnimatedSizing(duration: const Duration(milliseconds: 1000), child: child);
   }
   @override
   Widget build(BuildContext context) => AnimatedSize(

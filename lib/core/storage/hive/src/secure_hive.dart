@@ -13,7 +13,7 @@ const _secureStorage = FlutterSecureStorage();
 /// encryption key (via `flutter_secure_storage`) to provide encrypted boxes.
 ///
 /// Typical usage: call `initialize()` before `getData`/`setData`.
-class SecureHive<T> {
+class KSecureHive<T> {
   final String secureBoxName;
   final String secureCipherKey;
 
@@ -21,7 +21,7 @@ class SecureHive<T> {
 
   bool get isInitialized => _secureBox != null;
 
-  SecureHive({this.secureBoxName = kSecureBoxName, this.secureCipherKey = kSecureBoxName});
+  KSecureHive({this.secureBoxName = kSecureBoxName, this.secureCipherKey = kSecureBoxName});
 
   Future<void> initialize() async {
     final cipherKey = await _secureStorage.read(key: secureCipherKey);
@@ -52,7 +52,7 @@ class SecureHive<T> {
     return _secureBox?.get(key);
   }
 
-  Future<bool> resetAll(String acknowledge) => Result.tryRunAsync(() async {
+  Future<bool> resetAll(String acknowledge) => KResult.tryRunAsync(() async {
     await _secureBox?.clear();
     await _secureStorage.delete(key: secureCipherKey);
   }).then((_) => true).catchError((_) => false);

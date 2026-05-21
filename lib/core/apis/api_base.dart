@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
@@ -39,10 +40,10 @@ typedef Any = dynamic;
 /// Use a single shared instance for each API root to avoid cache or state
 /// conflicts between clients.
 
-final _apiKeys = <ApiKeyEnum, String>{};
+final _apiKeys = <Enum, String>{};
 
-abstract class ApiBase {
-  ApiBase();
+abstract class KApiBase {
+  KApiBase();
   static int _increment = -1;
   static int get _incrementId => _increment++;
 
@@ -64,7 +65,7 @@ abstract class ApiBase {
   /// Don't use syncCacheToStorage yet, not yet implemented!
   Future<void> intialize({
     required String baseUrl,
-    Map<ApiKeyEnum, String>? withApiKeys,
+    Map<Enum, String>? withApiKeys,
     bool monitorActivities = kDebugMode,
     String cacheBoxName = kApiCacheBoxName,
     bool syncCacheToStorage = false,

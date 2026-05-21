@@ -13,8 +13,8 @@ export 'package:kickin/core/models/file_path.dart';
 
 /// A widget that adapts to display an image from either a local file or a network URL, with a fallback widget for error handling.
 /// Only supports file paths that are either local or network URLs. If the path is invalid or unsupported, the fallback widget will be displayed.
-class AdaptiveImage extends StatelessWidget {
-  final FilePath path;
+class KAdaptiveImage extends StatelessWidget {
+  final KFilePath path;
   final Widget fallbackWidget;
   final Size? size;
   final double scale = 1.0;
@@ -34,7 +34,7 @@ class AdaptiveImage extends StatelessWidget {
   final int? cacheHeight;
   final FilterQuality filterQuality = FilterQuality.medium;
 
-  const AdaptiveImage({
+  const KAdaptiveImage({
     super.key,
     required this.path,
     required this.fallbackWidget,

@@ -1,8 +1,8 @@
 part of 'api_base.dart';
 
-/// Base class for concrete API clients owned by an [ApiBase].
+/// Base class for concrete API clients owned by an [KApiBase].
 ///
-/// Subclasses receive their parent [ApiBase] through the constructor and can
+/// Subclasses receive their parent [KApiBase] through the constructor and can
 /// read shared state such as [baseUrl] and per-client cache values from it.
 ///
 /// Example:
@@ -14,18 +14,23 @@ part of 'api_base.dart';
 ///
 /// Use this for API modules that need access to the shared base
 /// configuration.
-abstract class Api<CacheType> {
-  final ApiBase _parent;
-  Api(this._parent);
+abstract class KApi<CacheType> {
+  final KApiBase _parent;
+  KApi(this._parent);
 
-  final id = ApiBase._incrementId;
+  void log(String errorOrMsg) => "To be implemented!";
 
+  final id = KApiBase._incrementId;
+
+  @protected
   String get baseUrl => _parent._baseUrl;
 
+  @protected
   CacheType? get cache => _parent._getCache(id);
+  @protected
   void setCache(CacheType value) => _parent._setCache(id, value);
 
-  // void listener() {
-  //   // Doing nothing
-  // }
+  Dio _api = Dio();
+  Dio get api => _api;
+  void resetDio() => _api = Dio();
 }

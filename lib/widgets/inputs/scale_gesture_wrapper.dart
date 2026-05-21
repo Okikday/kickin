@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 ///
 /// This is typically used to create Apple/iOS style bouncy buttons, where the
 /// button shrinks slightly when pressed down and bounces back when released.
-class ScaleGestureWrapper extends StatefulWidget {
+class KScaleGestureWrapper extends StatefulWidget {
   /// The border radius used for the [InkWell] splash effect.
   final double borderRadius;
 
@@ -36,7 +36,7 @@ class ScaleGestureWrapper extends StatefulWidget {
   /// The widget below this widget in the tree.
   final Widget child;
 
-  const ScaleGestureWrapper({
+  const KScaleGestureWrapper({
     super.key,
     this.scaleBetween = (1.0, 0.9),
     this.onTapDown,
@@ -51,10 +51,10 @@ class ScaleGestureWrapper extends StatefulWidget {
   });
 
   @override
-  State<ScaleGestureWrapper> createState() => _ScaleGestureWrapperState();
+  State<KScaleGestureWrapper> createState() => _KScaleGestureWrapperState();
 }
 
-class _ScaleGestureWrapperState extends State<ScaleGestureWrapper> {
+class _KScaleGestureWrapperState extends State<KScaleGestureWrapper> {
   late final ValueNotifier<bool> scaleClickNotifier;
   @override
   void initState() {

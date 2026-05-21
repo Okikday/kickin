@@ -7,14 +7,14 @@ import 'package:kickin/core/utilities/result.dart';
 ///
 /// Provides convenience methods for `initialize`, `setData`, `getData`, and
 /// watching changes by key.
-class AppHive<T> {
+class KAppHive<T> {
   final String boxName;
 
   Box<T>? _box;
 
   bool get isInitialized => _box != null;
 
-  AppHive({this.boxName = kAppBoxName});
+  KAppHive({this.boxName = kAppBoxName});
 
   Future<void> initialize() async => _box = await Hive.openBox(kAppBoxName);
 
@@ -34,7 +34,8 @@ class AppHive<T> {
     return _box?.get(key);
   }
 
-  Future<void> deleteData({required String key}) async => await Result.tryRunAsync(() async => await _box?.delete(key));
+  Future<void> deleteData({required String key}) async =>
+      await KResult.tryRunAsync(() async => await _box?.delete(key));
 
   Stream<void> watchChanges({required String key}) async* {
     yield* _box!.watch(key: key);
@@ -45,7 +46,7 @@ class AppHive<T> {
     yield* _box!.watch(key: key).asyncMap((e) => e.value);
   }
 
-  Future<bool> resetAll(String acknowledge) => Result.tryRunAsync(() async {
+  Future<bool> resetAll(String acknowledge) => KResult.tryRunAsync(() async {
     await _box?.clear();
   }).then((_) => true).catchError((_) => false);
 }

@@ -1,20 +1,20 @@
 part of '../extensions.dart';
 
-extension ProviderExtension<StateT> on ProviderListenable<StateT> {
+extension KProviderExtension<StateT> on ProviderListenable<StateT> {
   StateT read(WidgetRef ref) => ref.read<StateT>(this);
   StateT watch(WidgetRef ref) => ref.watch<StateT>(this);
   StateT readX(Ref ref) => ref.read<StateT>(this);
   StateT watchX(Ref ref) => ref.watch<StateT>(this);
 }
 
-extension AsyncProviderExtension<StateT> on AsyncProviderListenable<StateT> {
+extension KAsyncProviderExtension<StateT> on AsyncProviderListenable<StateT> {
   AsyncValue<StateT> watch(WidgetRef ref) => ref.watch<AsyncValue<StateT>>(this);
   AsyncValue<StateT> read(WidgetRef ref) => ref.read<AsyncValue<StateT>>(this);
   AsyncValue<StateT> watchX(Ref ref) => ref.watch<AsyncValue<StateT>>(this);
   AsyncValue<StateT> readX(Ref ref) => ref.read<AsyncValue<StateT>>(this);
 }
 
-extension RefExtensions on Ref {
+extension KRefExtensions on Ref {
   void emptyListenMany(List<ProviderListenable> providers) {
     for (final p in providers) {
       listen(p, (_, _) {});
@@ -31,7 +31,7 @@ extension RefExtensions on Ref {
   }
 }
 
-extension WidgetRefExtensions on WidgetRef {
+extension KWidgetRefExtensions on WidgetRef {
   void emptyListenMany(List<ProviderListenable> providers) {
     for (final p in providers) {
       listen(p, (_, _) {});
@@ -39,7 +39,7 @@ extension WidgetRefExtensions on WidgetRef {
   }
 }
 
-extension NotifierX<N extends Notifier<S>, S> on NotifierProvider<N, S> {
+extension KNotifierX<N extends Notifier<S>, S> on NotifierProvider<N, S> {
   // N act(WidgetRef ref) => ref.read(notifier);
   // N actX(Ref ref) => ref.read(notifier);
 
@@ -59,7 +59,7 @@ extension NotifierX<N extends Notifier<S>, S> on NotifierProvider<N, S> {
   T expandX<T>(Ref ref, T Function(Ref r, NotifierProvider<N, S> s) selector) => selector(ref, this);
 }
 
-extension AsyncNotifierX<N extends AsyncNotifier<S>, S> on AsyncNotifierProvider<N, S> {
+extension KAsyncNotifierX<N extends AsyncNotifier<S>, S> on AsyncNotifierProvider<N, S> {
   N not(WidgetRef ref) => ref.read(notifier);
   N notX(Ref ref) => ref.read(notifier);
 

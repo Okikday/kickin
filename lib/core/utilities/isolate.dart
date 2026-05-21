@@ -35,10 +35,10 @@ import 'package:flutter/services.dart';
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Priority levels for [SmartIsolateContinuous] task scheduling.
-enum WorkPriority { low, medium, high }
+/// Priority levels for [KIsolateContinuous] task scheduling.
+enum KWorkPriority { low, medium, high }
 
-/// Default maximum queued tasks before [SmartIsolateContinuous.execute] throws.
+/// Default maximum queued tasks before [KIsolateContinuous.execute] throws.
 const int kDefaultMaxQueueSize = 512;
 
 // ─── SmartIsolate ─────────────────────────────────────────────────────────────
@@ -48,9 +48,9 @@ const int kDefaultMaxQueueSize = 512;
 /// Prefer the built-in [Isolate.run] when you do not need progress callbacks.
 /// This class adds the overhead of a [ReceivePort] loop solely for that feature.
 ///
-/// See [SmartIsolateAccess] for convenient mixin-based access.
-class SmartIsolate<TArg, TProgress, TResult> {
-  SmartIsolate._();
+/// See [KIsolateAccess] for convenient mixin-based access.
+class KIsolate<TArg, TProgress, TResult> {
+  KIsolate._();
 
   Isolate? _isolate;
   ReceivePort? _port;
@@ -62,13 +62,13 @@ class SmartIsolate<TArg, TProgress, TResult> {
   /// Spawns an isolate, runs [task], and returns its result.
   ///
   /// [onProgress] fires on the calling isolate each time the task calls its
-  /// `emit` callback. Throws [SmartIsolateException] on spawn failure or an
+  /// `emit` callback. Throws [KIsolateException] on spawn failure or an
   /// uncaught exception inside [task].
   static Future<TResult> run<TArg, TProgress, TResult>(
     Future<TResult> Function(TArg arg, void Function(TProgress) emit) task,
     TArg arg, {
     void Function(TProgress)? onProgress,
-  }) => SmartIsolate<TArg, TProgress, TResult>._()._execute(task, arg, onProgress: onProgress);
+  }) => KIsolate<TArg, TProgress, TResult>._()._execute(task, arg, onProgress: onProgress);
 
   Future<TResult> _execute(
     Future<TResult> Function(TArg, void Function(TProgress)) task,
@@ -96,7 +96,7 @@ class SmartIsolate<TArg, TProgress, TResult> {
         if (!result.isCompleted) result.complete(msg.value);
       } else if (msg is _Failure) {
         if (!result.isCompleted) {
-          result.completeError(SmartIsolateException(msg.error.toString(), msg.stack), msg.stack);
+          result.completeError(KIsolateException(msg.error.toString(), msg.stack), msg.stack);
         }
       }
     });
@@ -108,7 +108,7 @@ class SmartIsolate<TArg, TProgress, TResult> {
       );
     } catch (e, st) {
       _cleanup();
-      throw SmartIsolateException(
+      throw KIsolateException(
         'Isolate failed to spawn: $e\n'
         'Verify the task closure does not capture non-sendable objects '
         '(see serialization contract at the top of smart_isolate.dart).',
@@ -169,9 +169,9 @@ class SmartIsolate<TArg, TProgress, TResult> {
 /// callbacks, which always run on the main isolate's event loop — no concurrent
 /// mutation possible.
 ///
-/// See [SmartIsolateAccess] for convenient mixin-based access.
-class SmartIsolateContinuous<TArg, TResult> {
-  SmartIsolateContinuous._({required this.maxQueueSize, required this.agingThreshold});
+/// See [KIsolateAccess] for convenient mixin-based access.
+class KIsolateContinuous<TArg, TResult> {
+  KIsolateContinuous._({required this.maxQueueSize, required this.agingThreshold});
 
   /// Spawns and initialises a persistent isolate worker.
   ///
@@ -182,14 +182,14 @@ class SmartIsolateContinuous<TArg, TResult> {
   /// Note: avoid calling `rootBundle` or platform channels in [initialize]
   /// before [rootIsolateToken] has been applied — the entry point applies the
   /// token as the very first step before invoking [initialize].
-  static Future<SmartIsolateContinuous<TArg, TResult>> spawn<TArg, TResult>(
+  static Future<KIsolateContinuous<TArg, TResult>> spawn<TArg, TResult>(
     Future<void> Function(void Function(void Function(TArg arg, void Function(TResult) respond)) registerHandler)
     initialize, {
     RootIsolateToken? rootIsolateToken,
     int maxQueueSize = kDefaultMaxQueueSize,
     int agingThreshold = 10,
   }) async {
-    final inst = SmartIsolateContinuous<TArg, TResult>._(maxQueueSize: maxQueueSize, agingThreshold: agingThreshold);
+    final inst = KIsolateContinuous<TArg, TResult>._(maxQueueSize: maxQueueSize, agingThreshold: agingThreshold);
     await inst._init(initialize, rootIsolateToken: rootIsolateToken);
     return inst;
   }
@@ -237,7 +237,7 @@ class SmartIsolateContinuous<TArg, TResult> {
         _next();
       } else if (msg is _ContFailure) {
         final c = _pending.remove(msg.taskId);
-        c?.completeError(SmartIsolateException(msg.error.toString(), msg.stack), msg.stack);
+        c?.completeError(KIsolateException(msg.error.toString(), msg.stack), msg.stack);
         _dispatching = false;
         _next();
       }
@@ -256,18 +256,18 @@ class SmartIsolateContinuous<TArg, TResult> {
       _running = true;
     } catch (e, st) {
       _teardown(kill: false);
-      throw SmartIsolateException('Failed to spawn continuous isolate: $e', st);
+      throw KIsolateException('Failed to spawn continuous isolate: $e', st);
     }
   }
 
   /// Enqueues [arg] for execution at the given [priority].
   ///
-  /// Throws [SmartIsolateException] if the isolate is not running or the
+  /// Throws [KIsolateException] if the isolate is not running or the
   /// queue is full.
-  Future<TResult> execute(TArg arg, {WorkPriority priority = WorkPriority.medium}) {
-    if (!_running) throw const SmartIsolateException('Isolate is not running.');
+  Future<TResult> execute(TArg arg, {KWorkPriority priority = KWorkPriority.medium}) {
+    if (!_running) throw const KIsolateException('Isolate is not running.');
     if (pendingCount >= maxQueueSize) {
-      throw SmartIsolateException('Task queue is full ($maxQueueSize). Apply backpressure or raise maxQueueSize.');
+      throw KIsolateException('Task queue is full ($maxQueueSize). Apply backpressure or raise maxQueueSize.');
     }
 
     final id = _nextId;
@@ -278,11 +278,11 @@ class SmartIsolateContinuous<TArg, TResult> {
 
     final task = _Queued<TArg>(id, arg);
     switch (priority) {
-      case WorkPriority.high:
+      case KWorkPriority.high:
         _high.add(task);
-      case WorkPriority.medium:
+      case KWorkPriority.medium:
         _med.add(task);
-      case WorkPriority.low:
+      case KWorkPriority.low:
         _low.add(task);
     }
 
@@ -314,7 +314,7 @@ class SmartIsolateContinuous<TArg, TResult> {
     _workerPort!.send(_ContTask<TArg>(task.id, task.arg));
   }
 
-  /// Kills the isolate. All pending tasks fail with [SmartIsolateException].
+  /// Kills the isolate. All pending tasks fail with [KIsolateException].
   void dispose() => _teardown(kill: true);
 
   void _teardown({required bool kill}) {
@@ -334,7 +334,7 @@ class SmartIsolateContinuous<TArg, TResult> {
     _low.clear();
 
     for (final c in _pending.values) {
-      if (!c.isCompleted) c.completeError(const SmartIsolateException('Isolate disposed.'));
+      if (!c.isCompleted) c.completeError(const KIsolateException('Isolate disposed.'));
     }
     _pending.clear();
     _dispatching = false;
@@ -381,7 +381,7 @@ class SmartIsolateContinuous<TArg, TResult> {
 ///
 /// Mix this into any class — a service, a controller, a repository — and
 /// call [isolateRun] or [isolateSpawn] directly without importing or
-/// referencing [SmartIsolate] or [SmartIsolateContinuous] at the call site.
+/// referencing [KIsolate] or [KIsolateContinuous] at the call site.
 ///
 /// ```dart
 /// class ImageProcessor with SmartIsolateAccess {
@@ -413,21 +413,21 @@ class SmartIsolateContinuous<TArg, TResult> {
 ///   void dispose() => _worker.dispose();
 /// }
 /// ```
-mixin SmartIsolateAccess {
-  /// Runs a one-shot task in a new isolate. Equivalent to [SmartIsolate.run].
+mixin KIsolateAccess {
+  /// Runs a one-shot task in a new isolate. Equivalent to [KIsolate.run].
   Future<TResult> isolateRun<TArg, TProgress, TResult>(
     Future<TResult> Function(TArg arg, void Function(TProgress) emit) task,
     TArg arg, {
     void Function(TProgress)? onProgress,
-  }) => SmartIsolate.run<TArg, TProgress, TResult>(task, arg, onProgress: onProgress);
+  }) => KIsolate.run<TArg, TProgress, TResult>(task, arg, onProgress: onProgress);
 
-  /// Spawns a persistent isolate worker. Equivalent to [SmartIsolateContinuous.spawn].
-  Future<SmartIsolateContinuous<TArg, TResult>> isolateSpawn<TArg, TResult>(
+  /// Spawns a persistent isolate worker. Equivalent to [KIsolateContinuous.spawn].
+  Future<KIsolateContinuous<TArg, TResult>> isolateSpawn<TArg, TResult>(
     Future<void> Function(void Function(void Function(TArg, void Function(TResult))) registerHandler) initialize, {
     RootIsolateToken? rootIsolateToken,
     int maxQueueSize = kDefaultMaxQueueSize,
     int agingThreshold = 10,
-  }) => SmartIsolateContinuous.spawn<TArg, TResult>(
+  }) => KIsolateContinuous.spawn<TArg, TResult>(
     initialize,
     rootIsolateToken: rootIsolateToken,
     maxQueueSize: maxQueueSize,
@@ -438,11 +438,11 @@ mixin SmartIsolateAccess {
 // ─── Exception ────────────────────────────────────────────────────────────────
 
 /// Thrown when isolate spawn or execution fails inside the SmartIsolate helpers.
-class SmartIsolateException implements Exception {
+class KIsolateException implements Exception {
   final String message;
   final StackTrace? stackTrace;
 
-  const SmartIsolateException(this.message, [this.stackTrace]);
+  const KIsolateException(this.message, [this.stackTrace]);
 
   @override
   String toString() => 'SmartIsolateException: $message';

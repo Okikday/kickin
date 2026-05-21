@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 ///
 /// Wraps [Text] and provides convenient parameters for common styling needs,
 /// plus an optional tooltip when text is truncated.
-class AppText extends StatelessWidget {
+class KText extends StatelessWidget {
   final String data;
   final TextStyle? style;
   final double? fontSize;
@@ -18,7 +18,7 @@ class AppText extends StatelessWidget {
   final double? letterSpacing;
   final bool wrapWithTooltip;
   final String? fontFamily;
-  const AppText(
+  const KText(
     this.data, {
     super.key,
     this.style,

@@ -2,7 +2,7 @@ part of '../extensions.dart';
 
 /// Extension on num to convert to Duration and SizedBox
 /// Example: 500.inMs will return Duration of 500 milliseconds
-extension NumDurationExtension on num {
+extension KNumDurationExtension on num {
   Duration get inMicroseconds => Duration(microseconds: round());
   Duration get inMs => (this * 1000).inMicroseconds;
   Duration get inMilliseconds => (this * 1000).inMicroseconds;
@@ -12,7 +12,7 @@ extension NumDurationExtension on num {
   Duration get inDays => (this * 1000 * 1000 * 60 * 60 * 24).inMicroseconds;
 }
 
-extension WidgetExtension on num {
+extension KWidgetExtension on num {
   SizedBox get toHBox => SizedBox(width: toDouble());
   SizedBox get toVBox => SizedBox(height: toDouble());
   SliverToBoxAdapter get toHSliverBox => SliverToBoxAdapter(child: toHBox);

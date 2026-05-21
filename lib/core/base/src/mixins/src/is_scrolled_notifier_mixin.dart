@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 const _scrollThreshold = kToolbarHeight;
 
-mixin IsScrolledNotifierMixin<T extends StatefulWidget> on State<T> {
+mixin KIsScrolledNotifierMixin<T extends StatefulWidget> on State<T> {
   final scrollController = ScrollController();
   final isScrolledNotifier = ValueNotifier<bool>(false);
 
