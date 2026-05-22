@@ -1,3 +1,6 @@
+## 0.0.1-dev.14
+- Added some more params and did some fixes
+
 ## 0.0.1-dev.13
 - Fix the issue of Generic type mismatch in _KRestRequest classes
 

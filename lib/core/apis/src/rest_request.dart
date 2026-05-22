@@ -89,6 +89,7 @@ class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KGetRequ
 
   /// Returns a copy of this request with the supplied overrides.
   KGetRequest<Raw, Formatted> copyWith({
+    String? Function(String)? pathTransform,
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
@@ -98,7 +99,7 @@ class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KGetRequ
     void Function(int, int)? onReceiveProgress,
     Formatted Function(Raw)? decoder,
   }) => KGetRequest<Raw, Formatted>(
-    path,
+    pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -151,6 +152,8 @@ class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPostRe
 
   /// Returns a copy of this request with the supplied overrides.
   KPostRequest<Raw, Formatted> copyWith({
+    String? Function(String)? pathTransform,
+    bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
     Options? options,
@@ -160,7 +163,8 @@ class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPostRe
     void Function(int, int)? onReceiveProgress,
     Formatted Function(Raw)? decoder,
   }) => KPostRequest<Raw, Formatted>(
-    path,
+    pathTransform?.call(path) ?? path,
+    usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
     options: options ?? this.options,
@@ -213,6 +217,7 @@ class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPutRequ
 
   /// Returns a copy of this request with the supplied overrides.
   KPutRequest<Raw, Formatted> copyWith({
+    String? Function(String)? pathTransform,
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
@@ -223,7 +228,7 @@ class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPutRequ
     void Function(int, int)? onReceiveProgress,
     Formatted Function(Raw)? decoder,
   }) => KPutRequest<Raw, Formatted>(
-    path,
+    pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -277,6 +282,7 @@ class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPatch
 
   /// Returns a copy of this request with the supplied overrides.
   KPatchRequest<Raw, Formatted> copyWith({
+    String? Function(String)? pathTransform,
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
@@ -287,7 +293,7 @@ class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPatch
     void Function(int, int)? onReceiveProgress,
     Formatted Function(Raw)? decoder,
   }) => KPatchRequest<Raw, Formatted>(
-    path,
+    pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -336,6 +342,7 @@ class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDele
 
   /// Returns a copy of this request with the supplied overrides.
   KDeleteRequest<Raw, Formatted> copyWith({
+    String? Function(String)? pathTransform,
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
@@ -344,7 +351,7 @@ class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDele
     Map<String, dynamic>? queryParams,
     Formatted Function(Raw)? decoder,
   }) => KDeleteRequest<Raw, Formatted>(
-    path,
+    pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -403,6 +410,7 @@ class KDownloadRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDo
 
   /// Returns a copy of this request with the supplied overrides.
   KDownloadRequest copyWith({
+    String? Function(String)? pathTransform,
     bool? usePrimary,
     dynamic savePath,
     Options? options,
@@ -411,7 +419,7 @@ class KDownloadRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDo
     void Function(int, int)? onReceiveProgress,
     bool? deleteOnError,
   }) => KDownloadRequest<Raw, Formatted>(
-    path,
+    pathTransform?.call(path) ?? path,
     savePath: savePath ?? this.savePath,
     usePrimary: usePrimary ?? this.usePrimary,
     options: options ?? this.options,
