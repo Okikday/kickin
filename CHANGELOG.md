@@ -1,3 +1,6 @@
+## 0.0.1-dev.11
+- Minimal changes to generic types on some classes
+
 ## 0.0.1-dev.10
 - Improvements to the copyWith access method on the _KRestRequest classes
 
