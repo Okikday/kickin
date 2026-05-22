@@ -81,7 +81,7 @@ class KGetRequest<Out> extends _KRestRequest<Out> {
       );
       return KResponse(requestOptions: response.requestOptions, decode: decode);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('GET'), decode: decode);
+      return KResponse(requestOptions: _requestOptionsFor('GET'), decode: decode, error: e);
     }
   }
 
@@ -143,7 +143,7 @@ class KPostRequest<Out> extends _KRestRequest<Out> {
       );
       return KResponse(requestOptions: response.requestOptions, decode: decode);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('POST'), decode: decode);
+      return KResponse(requestOptions: _requestOptionsFor('POST'), decode: decode, error: e);
     }
   }
 
@@ -328,7 +328,7 @@ class KDeleteRequest<Out> extends _KRestRequest<Out> {
       );
       return KResponse(requestOptions: response.requestOptions, decode: decode);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('DELETE'), decode: decode);
+      return KResponse(requestOptions: _requestOptionsFor('DELETE'), decode: decode, error: e);
     }
   }
 
@@ -395,7 +395,7 @@ class KDownloadRequest<Out> extends _KRestRequest<Out> {
       );
       return KResponse(requestOptions: response.requestOptions, decode: decode);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('DOWNLOAD'), decode: decode);
+      return KResponse(requestOptions: _requestOptionsFor('DOWNLOAD'), decode: decode, error: e);
     }
   }
 

@@ -2,7 +2,8 @@ import 'package:dio/dio.dart';
 
 class KResponse<Out> extends Response<Out> {
   final Out Function(Object?)? decode;
-  KResponse({this.decode, required super.requestOptions});
+  final Object? error;
+  KResponse({this.decode, this.error, required super.requestOptions});
 
   bool get isSuccess => data != null;
 
