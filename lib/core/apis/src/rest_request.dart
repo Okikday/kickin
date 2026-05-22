@@ -2,8 +2,6 @@
 // remember variants
 part of '../api_base.dart';
 
-typedef Decoder<Raw, Formatted> = Formatted Function(Raw);
-
 Dio _primary = Dio();
 Dio _external = Dio();
 
@@ -35,7 +33,7 @@ sealed class _KRestRequest<Raw, Formatted, T extends _KRestRequest<Raw, Formatte
   final FutureOr<T> Function(T request)? resolveRequest;
 
   /// Converts the raw Dio response payload into the client-facing output type.
-  final Decoder<Raw, Formatted>? decoder;
+  final Formatted Function(Raw)? decoder;
 
   /// Selects the Dio instance that matches [usePrimary].
   Dio get _dio => usePrimary ? _primary : _external;
@@ -81,9 +79,9 @@ class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KGetRequ
         cancelToken: r?.cancelToken ?? cancelToken,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('GET'), decoder: decoder, error: e);
+      return KResponse<Raw, Formatted>(requestOptions: _requestOptionsFor('GET'), decoder: decoder, error: e);
     }
   }
 
@@ -98,7 +96,7 @@ class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KGetRequ
     Options? options,
     CancelToken? cancelToken,
     void Function(int, int)? onReceiveProgress,
-    Decoder<Raw, Formatted>? decode,
+    Formatted Function(Raw)? decoder,
   }) => KGetRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
@@ -109,7 +107,7 @@ class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KGetRequ
     cancelToken: cancelToken ?? this.cancelToken,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decoder: decode ?? this.decoder,
+    decoder: decoder ?? this.decoder,
   );
 }
 
@@ -143,9 +141,9 @@ class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPostRe
         onSendProgress: onSendProgress,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('POST'), decoder: decoder, error: e);
+      return KResponse<Raw, Formatted>(requestOptions: _requestOptionsFor('POST'), decoder: decoder, error: e);
     }
   }
 
@@ -160,7 +158,7 @@ class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPostRe
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    Decoder<Raw, Formatted>? decode,
+    Formatted Function(Raw)? decoder,
   }) => KPostRequest<Raw, Formatted>(
     path,
     headers: headers ?? this.headers,
@@ -171,7 +169,7 @@ class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPostRe
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decoder: decode ?? this.decoder,
+    decoder: decoder ?? this.decoder,
   );
 }
 
@@ -205,9 +203,9 @@ class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPutRequ
         onSendProgress: onSendProgress,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('PUT'), decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: _requestOptionsFor('PUT'), decoder: decoder);
     }
   }
 
@@ -223,7 +221,7 @@ class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPutRequ
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    Decoder<Raw, Formatted>? decode,
+    Formatted Function(Raw)? decoder,
   }) => KPutRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
@@ -235,7 +233,7 @@ class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPutRequ
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decoder: decode ?? this.decoder,
+    decoder: decoder ?? this.decoder,
   );
 }
 
@@ -269,9 +267,9 @@ class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPatch
         onSendProgress: onSendProgress,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('PATCH'), decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: _requestOptionsFor('PATCH'), decoder: decoder);
     }
   }
 
@@ -287,7 +285,7 @@ class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPatch
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    Decoder<Raw, Formatted>? decode,
+    Formatted Function(Raw)? decoder,
   }) => KPatchRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
@@ -299,7 +297,7 @@ class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPatch
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decoder: decode ?? this.decoder,
+    decoder: decoder ?? this.decoder,
   );
 }
 
@@ -328,9 +326,9 @@ class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDele
         queryParameters: r?.queryParams ?? queryParams,
         cancelToken: r?.cancelToken ?? cancelToken,
       );
-      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('DELETE'), decoder: decoder, error: e);
+      return KResponse<Raw, Formatted>(requestOptions: _requestOptionsFor('DELETE'), decoder: decoder, error: e);
     }
   }
 
@@ -344,7 +342,7 @@ class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDele
     Options? options,
     CancelToken? cancelToken,
     Map<String, dynamic>? queryParams,
-    Decoder<Raw, Formatted>? decode,
+    Formatted Function(Raw)? decoder,
   }) => KDeleteRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
@@ -354,7 +352,7 @@ class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDele
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     resolveRequest: resolveRequest,
-    decoder: decode ?? this.decoder,
+    decoder: decoder ?? this.decoder,
   );
 }
 
@@ -395,9 +393,9 @@ class KDownloadRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDo
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
         deleteOnError: deleteOnError,
       );
-      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
+      return KResponse<Raw, Formatted>(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('DOWNLOAD'), decoder: decoder, error: e);
+      return KResponse<Raw, Formatted>(requestOptions: _requestOptionsFor('DOWNLOAD'), decoder: decoder, error: e);
     }
   }
 
