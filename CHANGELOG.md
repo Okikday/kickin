@@ -1,3 +1,6 @@
+## 0.0.1-dev.12
+- Improved error handling in the KRestRequest classes
+
 ## 0.0.1-dev.11
 - Minimal changes to generic types on some classes
 

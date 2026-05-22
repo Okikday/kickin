@@ -21,7 +21,7 @@ class ChatsApi extends KApi {
 }
 
 mixin ChatsApiRequests on ChatsApi {
-  final tasks = KPostRequest('/chats', decode: (p0) => ChatModel());
+  final tasks = KPostRequest('/chats', decoder: (p0) => ChatModel());
 }
 
 class ChatModel {}

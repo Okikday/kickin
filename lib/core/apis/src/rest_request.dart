@@ -2,10 +2,14 @@
 // remember variants
 part of '../api_base.dart';
 
+typedef Decoder<Raw, Formatted> = Formatted Function(Raw);
+typedef RequestResolver<Raw, Formatted> =
+    FutureOr<_KRestRequest<Raw, Formatted>> Function(_KRestRequest<Raw, Formatted> request);
+
 Dio _primary = Dio();
 Dio _external = Dio();
 
-sealed class _KRestRequest<Out> {
+sealed class _KRestRequest<Raw, Formatted> {
   /// Shared request configuration used by every request wrapper in this file.
   const _KRestRequest(
     this.path, {
@@ -17,7 +21,7 @@ sealed class _KRestRequest<Out> {
     this.cancelToken,
     this.onReceiveProgress,
     this.resolveRequest,
-    this.decode,
+    this.decoder,
   });
 
   final String path;
@@ -30,10 +34,10 @@ sealed class _KRestRequest<Out> {
   final void Function(int, int)? onReceiveProgress;
 
   /// This can be used to modify or replace the entire request operation
-  final FutureOr<_KRestRequest<Out>> Function(_KRestRequest<Out> request)? resolveRequest;
+  final RequestResolver? resolveRequest;
 
   /// Converts the raw Dio response payload into the client-facing output type.
-  final Out Function(Object?)? decode;
+  final Decoder<Raw, Formatted>? decoder;
 
   /// Selects the Dio instance that matches [usePrimary].
   Dio get _dio => usePrimary ? _primary : _external;
@@ -54,7 +58,7 @@ sealed class _KRestRequest<Out> {
 }
 
 /// GET request wrapper with an optional custom operation and response decoder.
-class KGetRequest<Out> extends _KRestRequest<Out> {
+class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
   const KGetRequest(
     super.path, {
     super.usePrimary,
@@ -65,13 +69,13 @@ class KGetRequest<Out> extends _KRestRequest<Out> {
     super.cancelToken,
     super.onReceiveProgress,
     super.resolveRequest,
-    super.decode,
+    super.decoder,
   });
 
-  Future<KResponse<Out>> getResponse() async {
+  Future<KResponse<Raw, Formatted>> getResponse() async {
     try {
       final r = resolveRequest != null ? await resolveRequest!(this) : null;
-      final response = await _dio.get<Out>(
+      final response = await _dio.get<Raw>(
         r?.path ?? path,
         options: r?.options ?? _requestOptions,
         data: r?.data ?? data,
@@ -79,16 +83,16 @@ class KGetRequest<Out> extends _KRestRequest<Out> {
         cancelToken: r?.cancelToken ?? cancelToken,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decode: decode);
+      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('GET'), decode: decode, error: e);
+      return KResponse(requestOptions: _requestOptionsFor('GET'), decoder: decoder, error: e);
     }
   }
 
-  Future<Out?> get() => getResponse().then((v) => v.value);
+  Future<Formatted?> get() => getResponse().then((v) => v.value);
 
   /// Returns a copy of this request with the supplied overrides.
-  KGetRequest<Out> copyWith({
+  KGetRequest<Raw, Formatted> copyWith({
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
@@ -96,8 +100,8 @@ class KGetRequest<Out> extends _KRestRequest<Out> {
     Options? options,
     CancelToken? cancelToken,
     void Function(int, int)? onReceiveProgress,
-    Out Function(Object?)? decode,
-  }) => KGetRequest<Out>(
+    Decoder<Raw, Formatted>? decode,
+  }) => KGetRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
@@ -107,12 +111,12 @@ class KGetRequest<Out> extends _KRestRequest<Out> {
     cancelToken: cancelToken ?? this.cancelToken,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decode: decode ?? this.decode,
+    decoder: decode ?? this.decoder,
   );
 }
 
 /// POST request wrapper with send-progress support and optional response decoding.
-class KPostRequest<Out> extends _KRestRequest<Out> {
+class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
   const KPostRequest(
     super.path, {
     super.usePrimary,
@@ -124,15 +128,15 @@ class KPostRequest<Out> extends _KRestRequest<Out> {
     super.onReceiveProgress,
     this.onSendProgress,
     super.resolveRequest,
-    super.decode,
+    super.decoder,
   });
 
   final void Function(int, int)? onSendProgress;
 
-  Future<KResponse<Out>> postResponse() async {
+  Future<KResponse<Raw, Formatted>> postResponse() async {
     try {
       final r = resolveRequest != null ? await resolveRequest!(this) : null;
-      final response = await _dio.post<Out>(
+      final response = await _dio.post<Raw>(
         r?.path ?? path,
         options: r?.options ?? _requestOptions,
         data: r?.data ?? data,
@@ -141,16 +145,16 @@ class KPostRequest<Out> extends _KRestRequest<Out> {
         onSendProgress: onSendProgress,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decode: decode);
+      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('POST'), decode: decode, error: e);
+      return KResponse(requestOptions: _requestOptionsFor('POST'), decoder: decoder, error: e);
     }
   }
 
-  Future<Out?> post() => postResponse().then((v) => v.value);
+  Future<Formatted?> post() => postResponse().then((v) => v.value);
 
   /// Returns a copy of this request with the supplied overrides.
-  KPostRequest<Out> copyWith({
+  KPostRequest<Raw, Formatted> copyWith({
     Map<String, String>? headers,
     Object? data,
     Options? options,
@@ -158,8 +162,8 @@ class KPostRequest<Out> extends _KRestRequest<Out> {
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    Out Function(Object?)? decode,
-  }) => KPostRequest<Out>(
+    Decoder<Raw, Formatted>? decode,
+  }) => KPostRequest<Raw, Formatted>(
     path,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -169,18 +173,18 @@ class KPostRequest<Out> extends _KRestRequest<Out> {
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decode: decode ?? this.decode,
+    decoder: decode ?? this.decoder,
   );
 }
 
 /// PUT request wrapper with send-progress support and optional response decoding.
-class KPutRequest<Out> extends _KRestRequest<Out> {
+class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
   const KPutRequest(
     super.path, {
     super.usePrimary,
     super.headers,
     super.data,
-    super.decode,
+    super.decoder,
     super.options,
     super.queryParams,
     super.cancelToken,
@@ -191,10 +195,10 @@ class KPutRequest<Out> extends _KRestRequest<Out> {
 
   final void Function(int, int)? onSendProgress;
 
-  Future<KResponse<Out>> putResponse() async {
+  Future<KResponse<Raw, Formatted>> putResponse() async {
     try {
       final r = resolveRequest != null ? await resolveRequest!(this) : null;
-      final response = await _dio.put<Out>(
+      final response = await _dio.put<Raw>(
         r?.path ?? path,
         options: r?.options ?? _requestOptions,
         data: r?.data ?? data,
@@ -203,16 +207,16 @@ class KPutRequest<Out> extends _KRestRequest<Out> {
         onSendProgress: onSendProgress,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decode: decode);
+      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('PUT'), decode: decode);
+      return KResponse(requestOptions: _requestOptionsFor('PUT'), decoder: decoder);
     }
   }
 
-  Future<Out?> put() => putResponse().then((v) => v.value);
+  Future<Formatted?> put() => putResponse().then((v) => v.value);
 
   /// Returns a copy of this request with the supplied overrides.
-  KPutRequest<Out> copyWith({
+  KPutRequest<Raw, Formatted> copyWith({
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
@@ -221,8 +225,8 @@ class KPutRequest<Out> extends _KRestRequest<Out> {
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    Out Function(Object?)? decode,
-  }) => KPutRequest<Out>(
+    Decoder<Raw, Formatted>? decode,
+  }) => KPutRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
@@ -233,12 +237,12 @@ class KPutRequest<Out> extends _KRestRequest<Out> {
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decode: decode ?? this.decode,
+    decoder: decode ?? this.decoder,
   );
 }
 
 /// PATCH request wrapper with send-progress support and optional response decoding.
-class KPatchRequest<Out> extends _KRestRequest<Out> {
+class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
   const KPatchRequest(
     super.path, {
     super.usePrimary,
@@ -250,15 +254,15 @@ class KPatchRequest<Out> extends _KRestRequest<Out> {
     super.onReceiveProgress,
     this.onSendProgress,
     super.resolveRequest,
-    super.decode,
+    super.decoder,
   });
 
   final void Function(int, int)? onSendProgress;
 
-  Future<KResponse<Out>> patchResponse() async {
+  Future<KResponse<Raw, Formatted>> patchResponse() async {
     try {
       final r = resolveRequest != null ? await resolveRequest!(this) : null;
-      final response = await _dio.patch<Out>(
+      final response = await _dio.patch<Raw>(
         r?.path ?? path,
         options: r?.options ?? _requestOptions,
         data: r?.data ?? data,
@@ -267,16 +271,16 @@ class KPatchRequest<Out> extends _KRestRequest<Out> {
         onSendProgress: onSendProgress,
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
       );
-      return KResponse(requestOptions: response.requestOptions, decode: decode);
+      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('PATCH'), decode: decode);
+      return KResponse(requestOptions: _requestOptionsFor('PATCH'), decoder: decoder);
     }
   }
 
-  Future<Out?> patch() => patchResponse().then((v) => v.value);
+  Future<Formatted?> patch() => patchResponse().then((v) => v.value);
 
   /// Returns a copy of this request with the supplied overrides.
-  KPatchRequest<Out> copyWith({
+  KPatchRequest<Raw, Formatted> copyWith({
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
@@ -285,8 +289,8 @@ class KPatchRequest<Out> extends _KRestRequest<Out> {
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    Out Function(Object?)? decode,
-  }) => KPatchRequest<Out>(
+    Decoder<Raw, Formatted>? decode,
+  }) => KPatchRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
@@ -297,12 +301,12 @@ class KPatchRequest<Out> extends _KRestRequest<Out> {
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolveRequest: resolveRequest,
-    decode: decode ?? this.decode,
+    decoder: decode ?? this.decoder,
   );
 }
 
 /// DELETE request wrapper with optional response decoding.
-class KDeleteRequest<Out> extends _KRestRequest<Out> {
+class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
   const KDeleteRequest(
     super.path, {
     super.usePrimary,
@@ -313,37 +317,37 @@ class KDeleteRequest<Out> extends _KRestRequest<Out> {
     super.cancelToken,
     super.onReceiveProgress,
     super.resolveRequest,
-    super.decode,
+    super.decoder,
   });
 
-  Future<KResponse<Out>> deleteResponse() async {
+  Future<KResponse<Raw, Formatted>> deleteResponse() async {
     try {
       final r = resolveRequest != null ? await resolveRequest!(this) : null;
-      final response = await _dio.delete<Out>(
+      final response = await _dio.delete<Raw>(
         r?.path ?? path,
         options: r?.options ?? _requestOptions,
         data: r?.data ?? data,
         queryParameters: r?.queryParams ?? queryParams,
         cancelToken: r?.cancelToken ?? cancelToken,
       );
-      return KResponse(requestOptions: response.requestOptions, decode: decode);
+      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('DELETE'), decode: decode, error: e);
+      return KResponse(requestOptions: _requestOptionsFor('DELETE'), decoder: decoder, error: e);
     }
   }
 
-  Future<Out?> delete() => deleteResponse().then((v) => v.value);
+  Future<Formatted?> delete() => deleteResponse().then((v) => v.value);
 
   /// Returns a copy of this request with the supplied overrides.
-  KDeleteRequest<Out> copyWith({
+  KDeleteRequest<Raw, Formatted> copyWith({
     bool? usePrimary,
     Map<String, String>? headers,
     Object? data,
     Options? options,
     CancelToken? cancelToken,
     Map<String, dynamic>? queryParams,
-    Out Function(Object?)? decode,
-  }) => KDeleteRequest<Out>(
+    Decoder<Raw, Formatted>? decode,
+  }) => KDeleteRequest<Raw, Formatted>(
     path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
@@ -352,12 +356,12 @@ class KDeleteRequest<Out> extends _KRestRequest<Out> {
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     resolveRequest: resolveRequest,
-    decode: decode ?? this.decode,
+    decoder: decode ?? this.decoder,
   );
 }
 
 /// Download request wrapper for saving remote files to disk.
-class KDownloadRequest<Out> extends _KRestRequest<Out> {
+class KDownloadRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
   const KDownloadRequest(
     super.path, {
     required this.savePath,
@@ -379,7 +383,7 @@ class KDownloadRequest<Out> extends _KRestRequest<Out> {
   /// Deletes the partially downloaded file when the download fails.
   final bool deleteOnError;
 
-  Future<KResponse<Out>> downloadResponse() async {
+  Future<KResponse<Raw, Formatted>> downloadResponse() async {
     try {
       final r = resolveRequest != null ? await resolveRequest!(this) : null;
       final response = await _dio.download(
@@ -393,9 +397,9 @@ class KDownloadRequest<Out> extends _KRestRequest<Out> {
         onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
         deleteOnError: deleteOnError,
       );
-      return KResponse(requestOptions: response.requestOptions, decode: decode);
+      return KResponse(requestOptions: response.requestOptions, decoder: decoder);
     } catch (e) {
-      return KResponse(requestOptions: _requestOptionsFor('DOWNLOAD'), decode: decode, error: e);
+      return KResponse(requestOptions: _requestOptionsFor('DOWNLOAD'), decoder: decoder, error: e);
     }
   }
 
@@ -410,7 +414,7 @@ class KDownloadRequest<Out> extends _KRestRequest<Out> {
     CancelToken? cancelToken,
     void Function(int, int)? onReceiveProgress,
     bool? deleteOnError,
-  }) => KDownloadRequest<Out>(
+  }) => KDownloadRequest<Raw, Formatted>(
     path,
     savePath: savePath ?? this.savePath,
     usePrimary: usePrimary ?? this.usePrimary,

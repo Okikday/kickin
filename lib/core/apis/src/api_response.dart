@@ -1,11 +1,21 @@
 import 'package:dio/dio.dart';
+import 'package:kickin/core/apis/api_base.dart';
 
-class KResponse<Out> extends Response<Out> {
-  final Out Function(Object?)? decode;
+class KResponse<Raw, Formatted> extends Response<Raw> {
+  final Decoder<Raw, Formatted>? decoder;
   final Object? error;
-  KResponse({this.decode, this.error, required super.requestOptions});
+  KResponse({this.decoder, this.error, required super.requestOptions});
 
   bool get isSuccess => data != null;
 
-  Out? get value => decode != null ? decode!(data) : data;
+  /// Don't call this if you didn't provide a [decoder] function, otherwise it would return null;
+  Formatted? get value {
+    final data = this.data;
+    if (data == null || decoder == null) return null;
+    try {
+      return decoder!(data);
+    } catch (e) {
+      return null;
+    }
+  }
 }
