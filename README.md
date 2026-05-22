@@ -2,7 +2,7 @@
 
 Kickin is a comprehensive toolkit designed to strip away boilerplate and simplify common, repetitive tasks in Flutter development. It packs robust utility classes, powerful extensions, and opinionated wrappers around popular community tools (like state management and persistency) to give you better developer ergonomics and predictable behaviour right out of the box. This means you don't have to start setting up the folders and copying files from old project to new project, just pub get [kickin].
 
-also for users of [https://pub.dev/packages/custom_widgets_toolkit]
+also for users from (custom_widgets_toolkit)[https://pub.dev/packages/custom_widgets_toolkit]
 
 Features
 - Boilerplate-free architecture: Helpers and mixins that tackle daily repetitive code
@@ -20,7 +20,7 @@ Add the package to your app dependencies:
 dependencies:
   flutter:
     sdk: flutter
-  kickin: 0.0.1-dev.8
+  kickin: 0.0.1-dev.9
 ```
 
 Then import the package root API where needed:
@@ -36,6 +36,17 @@ Initialize the persistent storage driver (e.g. Hive) if you intend to use the bu
 ```dart
 await KHive.on.initialize();
 KHive.on.app.setData(key: key, value: value);
+```
+
+REST API request example:
+
+```dart
+final request = KGetRequest<Map<String, dynamic>, Map<String, dynamic>>(
+  '/users/1',
+  decode: (data) => data,
+);
+
+final user = await request.copyWith(headers: {...}).get();
 ```
 
 API summary

@@ -1,29 +1,10 @@
 import 'package:dio/dio.dart';
 
-class KApiResponse<In, Out> {
-  final In? raw;
-
+class KResponse<In, Out> extends Response<In> {
   final Out Function(In?)? transform;
-  KApiResponse({required this.raw, this.transform});
+  KResponse({this.transform, required super.requestOptions});
 
-  bool get isSuccess => raw != null;
+  bool get isSuccess => data != null;
 
-  Out? get data {
-    if (isSuccess) {
-      return transform != null ? transform!(raw as In) : raw as Out?;
-    }
-    return null;
-  }
-
-  static Future<KApiResponse<In, Out>> run<In, Out>(
-    Future<In> Function(Dio dio) operation, {
-    Out Function(In?)? transform,
-  }) async {
-    try {
-      final raw = await operation(Dio());
-      return KApiResponse<In, Out>(raw: raw, transform: transform);
-    } catch (e) {
-      return KApiResponse<In, Out>(raw: null, transform: transform);
-    }
-  }
+  Out? get value => transform != null ? transform!(data) : data as Out?;
 }

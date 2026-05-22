@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:kickin/core/apis/api_base.dart';
 
 class Apis extends KApiBase {
-  static final instance = Apis();
+  static final find = Apis();
 
   late final chats = ChatsApi(this); // ChatsApi extends ApiInterface
 }
@@ -19,5 +19,11 @@ class ChatsApi extends KApi {
     return 'Chat data';
   }
 }
+
+mixin ChatsApiRequests on ChatsApi {
+  final tasks = KPostRequest('/chats', decode: (p0) => ChatModel());
+}
+
+class ChatModel {}
 
 void main() {}

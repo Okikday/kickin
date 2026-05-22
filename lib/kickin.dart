@@ -1,6 +1,20 @@
 library;
 
-export 'core/apis/api_base.dart' show KApi, KApiBase;
+export 'core/apis/api_base.dart'
+    show
+        KApi,
+        KApiBase,
+        KDeleteRequest,
+        KDownloadRequest,
+        KGetRequest,
+        KPatchRequest,
+        KPostRequest,
+        KPutRequest,
+        KRestRequest,
+        CancelToken,
+        Options,
+        FileAccessMode;
+export 'core/apis/src/api_response.dart' show KResponse;
 export 'core/base/base.dart'
     show
         KAsyncNotifierX,

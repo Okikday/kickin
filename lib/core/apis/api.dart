@@ -29,8 +29,4 @@ abstract class KApi<CacheType> {
   CacheType? get cache => _parent._getCache(id);
   @protected
   void setCache(CacheType value) => _parent._setCache(id, value);
-
-  Dio _api = Dio();
-  Dio get api => _api;
-  void resetDio() => _api = Dio();
 }

@@ -1,3 +1,8 @@
+## 0.0.1-dev.9
+- Centralized shared request fields in `KRestRequest` and kept concrete request wrappers focused on method-specific behavior.
+- Added PUT, PATCH, DELETE, and download request wrappers to the API surface.
+- Expanded inline API documentation for the request helpers and updated the package exports.
+
 ## 0.0.1-dev.8
 - Updated example app
 
