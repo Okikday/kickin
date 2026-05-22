@@ -3,13 +3,11 @@
 part of '../api_base.dart';
 
 typedef Decoder<Raw, Formatted> = Formatted Function(Raw);
-typedef RequestResolver<Raw, Formatted> =
-    FutureOr<_KRestRequest<Raw, Formatted>> Function(_KRestRequest<Raw, Formatted> request);
 
 Dio _primary = Dio();
 Dio _external = Dio();
 
-sealed class _KRestRequest<Raw, Formatted> {
+sealed class _KRestRequest<Raw, Formatted, T extends _KRestRequest<Raw, Formatted, T>> {
   /// Shared request configuration used by every request wrapper in this file.
   const _KRestRequest(
     this.path, {
@@ -34,7 +32,7 @@ sealed class _KRestRequest<Raw, Formatted> {
   final void Function(int, int)? onReceiveProgress;
 
   /// This can be used to modify or replace the entire request operation
-  final RequestResolver? resolveRequest;
+  final FutureOr<T> Function(T request)? resolveRequest;
 
   /// Converts the raw Dio response payload into the client-facing output type.
   final Decoder<Raw, Formatted>? decoder;
@@ -58,7 +56,7 @@ sealed class _KRestRequest<Raw, Formatted> {
 }
 
 /// GET request wrapper with an optional custom operation and response decoder.
-class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
+class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KGetRequest<Raw, Formatted>> {
   const KGetRequest(
     super.path, {
     super.usePrimary,
@@ -116,7 +114,7 @@ class KGetRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
 }
 
 /// POST request wrapper with send-progress support and optional response decoding.
-class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
+class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPostRequest<Raw, Formatted>> {
   const KPostRequest(
     super.path, {
     super.usePrimary,
@@ -178,7 +176,7 @@ class KPostRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
 }
 
 /// PUT request wrapper with send-progress support and optional response decoding.
-class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
+class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPutRequest<Raw, Formatted>> {
   const KPutRequest(
     super.path, {
     super.usePrimary,
@@ -242,7 +240,7 @@ class KPutRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
 }
 
 /// PATCH request wrapper with send-progress support and optional response decoding.
-class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
+class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KPatchRequest<Raw, Formatted>> {
   const KPatchRequest(
     super.path, {
     super.usePrimary,
@@ -306,7 +304,7 @@ class KPatchRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
 }
 
 /// DELETE request wrapper with optional response decoding.
-class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
+class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDeleteRequest<Raw, Formatted>> {
   const KDeleteRequest(
     super.path, {
     super.usePrimary,
@@ -361,7 +359,7 @@ class KDeleteRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
 }
 
 /// Download request wrapper for saving remote files to disk.
-class KDownloadRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted> {
+class KDownloadRequest<Raw, Formatted> extends _KRestRequest<Raw, Formatted, KDownloadRequest<Raw, Formatted>> {
   const KDownloadRequest(
     super.path, {
     required this.savePath,
