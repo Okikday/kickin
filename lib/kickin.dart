@@ -10,7 +10,6 @@ export 'core/apis/api_base.dart'
         KPatchRequest,
         KPostRequest,
         KPutRequest,
-        KRestRequest,
         CancelToken,
         Options,
         FileAccessMode;

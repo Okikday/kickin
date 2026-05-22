@@ -10,7 +10,7 @@ export 'package:dio/dio.dart' show CancelToken, Options, FileAccessMode;
 
 part 'src/api_monitor_mixin.dart';
 
-part 'src/api_end_point.dart';
+part 'src/rest_request.dart';
 
 part 'api.dart';
 
@@ -45,6 +45,7 @@ typedef Any = dynamic;
 
 final _apiKeys = <Enum, String>{};
 
+/// Use only one instance of this class per API root to avoid cache conflicts. For example, if you have a `MainApi` class that extends `KApiBase`, create a single instance of `MainApi` and use it throughout your app.
 abstract class KApiBase {
   KApiBase();
   static int _increment = -1;
@@ -88,4 +89,10 @@ abstract class KApiBase {
       throw UnimplementedError('Cache synchronization to storage is not implemented yet.');
     }
   }
+
+  /// Replaces the primary Dio instance used by requests that opt into it.
+  void setPrimaryDio(Dio dio) => _primary = dio;
+
+  /// Replaces the external Dio instance used by requests that opt out of the primary client.
+  void setExternal(Dio dio) => _external = dio;
 }

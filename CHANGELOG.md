@@ -1,3 +1,6 @@
+## 0.0.1-dev.10
+- Improvements to the copyWith access method on the _KRestRequest classes
+
 ## 0.0.1-dev.9
 - Centralized shared request fields in `KRestRequest` and kept concrete request wrappers focused on method-specific behavior.
 - Added PUT, PATCH, DELETE, and download request wrappers to the API surface.
