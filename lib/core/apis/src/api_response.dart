@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 class KResponse<Raw, Formatted> extends Response<Raw> {
@@ -15,7 +17,9 @@ class KResponse<Raw, Formatted> extends Response<Raw> {
     final data = this.data;
     if (data == null || decoder == null) return null;
     try {
-      return decoder?.call(data);
+      final decoded = decoder?.call(data);
+      if (decoded == null) log("Decoding failed for request: ${requestOptions.uri}");
+      return decoded;
     } catch (e) {
       return null;
     }

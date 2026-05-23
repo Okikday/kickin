@@ -18,7 +18,7 @@ abstract class KApi<CacheType> {
   final KApiBase _parent;
   KApi(this._parent);
 
-  void log(String errorOrMsg) => "To be implemented!";
+  // void log(String errorOrMsg) => "To be implemented!";
 
   final id = KApiBase._incrementId;
 
