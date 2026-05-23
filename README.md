@@ -20,7 +20,7 @@ Add the package to your app dependencies:
 dependencies:
   flutter:
     sdk: flutter
-  kickin: 0.0.1-dev.16
+  kickin: 0.0.1-dev.17
 ```
 
 Then import the package root API where needed:

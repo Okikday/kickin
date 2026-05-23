@@ -157,6 +157,8 @@ class KPostRequest<TDecoded> extends _KRestRequest<TDecoded, KPostRequest<TDecod
     super.resolveRequest,
     super.decoder,
     super.cacheResponse,
+    super.logRequest,
+    super.logResponse,
   });
 
   final void Function(int, int)? onSendProgress;

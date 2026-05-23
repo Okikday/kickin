@@ -1,3 +1,6 @@
+## 0.0.1-dev.17
+- Add logging of request and response params to KRestRequest classes
+
 ## 0.0.1-dev.16
 - Fix decoding issues with KRestRequest classes
 
