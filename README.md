@@ -1,9 +1,9 @@
-# Kickin — Practical Flutter utilities and widgets (In Progress)
+# Kickin (#experimental)
 
-Kickin is a comprehensive toolkit designed to strip away boilerplate and simplify common, repetitive tasks in Flutter development. It packs robust utility classes, powerful extensions, and opinionated wrappers around popular community tools (like state management and persistency) to give you better developer ergonomics and predictable behaviour right out of the box. This means you don't have to start setting up the folders and copying files from old project to new project, just pub get [kickin].
+Kickin is a toolkit that removes Flutter boilerplate with utilities, extensions, and opinionated wrappers for common tools (state, storage, etc.), so you can get started quickly by adding the package.
 
-also for users from (custom_widgets_toolkit)[https://pub.dev/packages/custom_widgets_toolkit]
-
+also for users that use [custom_widgets_toolkit](https://pub.dev/packages/custom_widgets_toolkit)
+#note documentation doesn't currently capture every feature or usage
 Features
 - Boilerplate-free architecture: Helpers and mixins that tackle daily repetitive code
 - Wrappers for popular tools: Ergonomic APIs for state management (e.g. Riverpod) and storage libraries (e.g. Hive)
@@ -20,7 +20,7 @@ Add the package to your app dependencies:
 dependencies:
   flutter:
     sdk: flutter
-  kickin: 0.0.1-dev.19
+  kickin: 0.0.1-dev.20
 ```
 
 Then import the package root API where needed:
