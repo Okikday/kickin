@@ -42,7 +42,8 @@ sealed class _KRestRequest<TDecoded, T extends _KRestRequest<TDecoded, T>> {
   final FutureOr<T> Function(T request)? resolveRequest;
 
   /// Converts the raw Dio response payload into the client-facing output type.
-  final TDecoded Function(Object?)? decoder;
+  /// [data] == [Response.data]
+  final TDecoded Function(dynamic data, Response _)? decoder;
 
   /// Selects the Dio instance that matches [usePrimary].
   Dio get _dio => usePrimary ? _api._parent._primaryDio : _api._parent._externalDio;
@@ -129,7 +130,7 @@ class KGetRequest<TDecoded> extends _KRestRequest<TDecoded, KGetRequest<TDecoded
     Options? options,
     CancelToken? cancelToken,
     void Function(int, int)? onReceiveProgress,
-    TDecoded Function(dynamic)? decoder,
+    TDecoded Function(dynamic data, Response _)? decoder,
   }) => KGetRequest<TDecoded>(
     _api,
     path: pathTransform?.call(path) ?? path,
@@ -194,7 +195,7 @@ class KPostRequest<TDecoded> extends _KRestRequest<TDecoded, KPostRequest<TDecod
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    TDecoded Function(dynamic)? decoder,
+    TDecoded Function(dynamic data, Response _)? decoder,
   }) => KPostRequest<TDecoded>(
     _api,
     path: pathTransform?.call(path) ?? path,
@@ -260,7 +261,7 @@ class KPutRequest<TDecoded> extends _KRestRequest<TDecoded, KPutRequest<TDecoded
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    TDecoded Function(dynamic)? decoder,
+    TDecoded Function(dynamic data, Response _)? decoder,
   }) => KPutRequest<TDecoded>(
     _api,
     path: pathTransform?.call(path) ?? path,
@@ -326,7 +327,7 @@ class KPatchRequest<TDecoded> extends _KRestRequest<TDecoded, KPatchRequest<TDec
     Map<String, dynamic>? queryParams,
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
-    TDecoded Function(dynamic)? decoder,
+    TDecoded Function(dynamic data, Response _)? decoder,
   }) => KPatchRequest<TDecoded>(
     _api,
     path: pathTransform?.call(path) ?? path,
@@ -385,7 +386,7 @@ class KDeleteRequest<TDecoded> extends _KRestRequest<TDecoded, KDeleteRequest<TD
     Options? options,
     CancelToken? cancelToken,
     Map<String, dynamic>? queryParams,
-    TDecoded Function(dynamic)? decoder,
+    TDecoded Function(dynamic data, Response _)? decoder,
   }) => KDeleteRequest<TDecoded>(
     _api,
     path: pathTransform?.call(path) ?? path,
@@ -514,7 +515,7 @@ class KRequest<TDecoded> extends _KRestRequest<TDecoded, KRequest<TDecoded>> {
     Options? options,
     CancelToken? cancelToken,
     void Function(int, int)? onReceiveProgress,
-    TDecoded Function(dynamic)? decoder,
+    TDecoded Function(dynamic data, Response _)? decoder,
   }) => KRequest<TDecoded>(
     _api,
     path: pathTransform?.call(path) ?? path,

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 
 class KResponse<Raw, Formatted> extends Response<Raw> {
-  final Formatted Function(Raw)? decoder;
+  final Formatted Function(Raw data, Response<Raw> _)? decoder;
   final Object? error;
   KResponse._({
     required super.data,
@@ -18,7 +18,11 @@ class KResponse<Raw, Formatted> extends Response<Raw> {
     required super.requestOptions,
   });
 
-  factory KResponse.fromDioResponse(Response<Raw> response, {Formatted Function(Raw)? decoder, Object? error}) {
+  factory KResponse.fromDioResponse(
+    Response<Raw> response, {
+    Formatted Function(Raw data, Response<Raw> _)? decoder,
+    Object? error,
+  }) {
     return KResponse<Raw, Formatted>._(
       decoder: decoder,
       error: error,
@@ -44,7 +48,7 @@ class KResponse<Raw, Formatted> extends Response<Raw> {
     if (data == null) return null;
     try {
       if (decoder == null) return (data as Formatted);
-      final decoded = decoder!(data);
+      final decoded = decoder!(data, this);
       return decoded;
     } catch (e) {
       log("Decoding failed for request: ${requestOptions.uri}");

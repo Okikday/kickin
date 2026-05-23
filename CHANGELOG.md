@@ -1,3 +1,6 @@
+## 0.0.1-dev.20
+- Added extra argument for [_KRestRequest.decoder]
+
 ## 0.0.1-dev.19
 - Fix return issue in KRestRequest/KApiResponse
 

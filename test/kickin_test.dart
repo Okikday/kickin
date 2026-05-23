@@ -24,7 +24,7 @@ mixin ChatsApiRequests on ChatsApi {
   late final tasks = KPostRequest(
     this,
     path: '/chats',
-    decoder: (p0) => ChatModel(),
+    decoder: (data, r) => r.data,
     resolveRequest: (request) async => request.copyWith(),
   );
 }
