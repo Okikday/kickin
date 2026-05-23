@@ -1,3 +1,6 @@
+## 0.0.1-dev.16
+- Fix decoding issues with KRestRequest classes
+
 ## 0.0.1-dev.15
 - Improved the KRestRequest classes
 

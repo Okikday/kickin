@@ -17,6 +17,8 @@ sealed class _KRestRequest<TDecoded, T extends _KRestRequest<TDecoded, T>> {
     this.resolveRequest,
     this.decoder,
     this.cacheResponse = false,
+    this.logRequest = false,
+    this.logResponse = false,
   });
 
   final KApi _api;
@@ -29,6 +31,12 @@ sealed class _KRestRequest<TDecoded, T extends _KRestRequest<TDecoded, T>> {
   final CancelToken? cancelToken;
   final void Function(int, int)? onReceiveProgress;
   final bool cacheResponse;
+
+  /// Better to use [kDebugMode] or [kDebugPrint]
+  final bool logRequest;
+
+  /// Better to use [kDebugMode] or [kDebugPrint]
+  final bool logResponse;
 
   /// This can be used to modify or replace the entire request operation
   final FutureOr<T> Function(T request)? resolveRequest;
@@ -61,9 +69,9 @@ sealed class _KRestRequest<TDecoded, T extends _KRestRequest<TDecoded, T>> {
     required Future<Response<Raw>> Function(T?) response,
   }) async {
     try {
-      if (_apiBase._logRequests) dev.log("API Request: $method $path", name: 'KApi', level: 1);
+      if (_apiBase._logRequests || logRequest) dev.log("API Request: $method $path", name: 'KApi', level: 1);
       final result = await response(resolveRequest == null ? null : await resolveRequest!(current));
-      if (_apiBase._logResponses) {
+      if (_apiBase._logResponses || logResponse) {
         dev.log("API Response: ${result.data}", name: 'KApi', level: 1);
       }
       return KResponse<Raw, TDecoded>(requestOptions: result.requestOptions, decoder: decoder);
@@ -88,6 +96,8 @@ class KGetRequest<TDecoded> extends _KRestRequest<TDecoded, KGetRequest<TDecoded
     super.resolveRequest,
     super.decoder,
     super.cacheResponse,
+    super.logRequest,
+    super.logResponse,
   });
 
   Future<KResponse<Raw, TDecoded>> getResponse<Raw>() => _runRequest<Raw>(
@@ -210,6 +220,9 @@ class KPutRequest<TDecoded> extends _KRestRequest<TDecoded, KPutRequest<TDecoded
     super.onReceiveProgress,
     super.resolveRequest,
     this.onSendProgress,
+    super.cacheResponse,
+    super.logRequest,
+    super.logResponse,
   });
 
   final void Function(int, int)? onSendProgress;
@@ -274,6 +287,8 @@ class KPatchRequest<TDecoded> extends _KRestRequest<TDecoded, KPatchRequest<TDec
     super.resolveRequest,
     super.decoder,
     super.cacheResponse,
+    super.logRequest,
+    super.logResponse,
   });
 
   final void Function(int, int)? onSendProgress;
@@ -337,6 +352,8 @@ class KDeleteRequest<TDecoded> extends _KRestRequest<TDecoded, KDeleteRequest<TD
     super.resolveRequest,
     super.decoder,
     super.cacheResponse,
+    super.logRequest,
+    super.logResponse,
   });
 
   Future<KResponse<Raw, TDecoded>> deleteResponse<Raw>() => _runRequest<Raw>(
@@ -391,6 +408,9 @@ class KDownloadRequest<TDecoded> extends _KRestRequest<TDecoded, KDownloadReques
     super.resolveRequest,
     this.fileAccessMode = FileAccessMode.write,
     this.deleteOnError = true,
+    super.cacheResponse,
+    super.logRequest,
+    super.logResponse,
   });
 
   /// The target file path or stream destination passed to Dio.
@@ -457,6 +477,9 @@ class KRequest<TDecoded> extends _KRestRequest<TDecoded, KRequest<TDecoded>> {
     super.onReceiveProgress,
     super.resolveRequest,
     this.onSendProgress,
+    super.cacheResponse,
+    super.logRequest,
+    super.logResponse,
   });
   final void Function(int, int)? onSendProgress;
 

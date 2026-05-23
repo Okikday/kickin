@@ -15,12 +15,13 @@ class KResponse<Raw, Formatted> extends Response<Raw> {
   /// Don't call this if you didn't provide a [decoder] function, otherwise it would return null;
   Formatted? get value {
     final data = this.data;
-    if (data == null || decoder == null) return null;
+    if (data == null) return null;
     try {
-      final decoded = decoder?.call(data);
-      if (decoded == null) log("Decoding failed for request: ${requestOptions.uri}");
+      if (decoder == null) return data as Formatted;
+      final decoded = decoder!(data);
       return decoded;
-    } catch (e) {
+    } finally {
+      log("Decoding failed for request: ${requestOptions.uri}");
       return null;
     }
   }
