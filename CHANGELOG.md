@@ -1,3 +1,6 @@
+## 0.0.1-dev.15
+- Improved the KRestRequest classes
+
 ## 0.0.1-dev.14
 - Added some more params and did some fixes
 
