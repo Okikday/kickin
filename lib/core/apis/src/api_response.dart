@@ -46,9 +46,9 @@ class KResponse<Raw, Formatted> extends Response<Raw> {
       if (decoder == null) return (data as Formatted);
       final decoded = decoder!(data);
       return decoded;
-    } finally {
+    } catch (e) {
       log("Decoding failed for request: ${requestOptions.uri}");
-      return null;
+      rethrow;
     }
   }
 }

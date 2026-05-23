@@ -1,3 +1,9 @@
+## 0.0.1-dev.19
+- Fix return issue in KRestRequest/KApiResponse
+
+## 0.0.1-dev.18
+- Fix where the KRestRequest/KApiResponse class is not returning data.
+
 ## 0.0.1-dev.17
 - Add logging of request and response params to KRestRequest classes
 
