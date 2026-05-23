@@ -74,9 +74,13 @@ sealed class _KRestRequest<TDecoded, T extends _KRestRequest<TDecoded, T>> {
       if (_apiBase._logResponses || logResponse) {
         dev.log("API Response: ${result.data}", name: 'KApi', level: 1);
       }
-      return KResponse<Raw, TDecoded>(requestOptions: result.requestOptions, decoder: decoder);
+      return KResponse<Raw, TDecoded>.fromDioResponse(result, decoder: decoder);
     } catch (e) {
-      return KResponse<Raw, TDecoded>(requestOptions: _requestOptionsFor(method), decoder: decoder, error: e);
+      return KResponse<Raw, TDecoded>.fromDioResponse(
+        Response(requestOptions: _requestOptionsFor(method)),
+        decoder: decoder,
+        error: e,
+      );
     }
   }
 }
