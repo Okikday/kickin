@@ -8,7 +8,7 @@ class Apis extends KApiBase {
   late final chats = ChatsApi(this); // ChatsApi extends ApiInterface
 }
 
-class ChatsApi extends KApi {
+class ChatsApi extends KApi<Map> {
   ChatsApi(super._parent);
 
   Future<String> fetchData() async {
@@ -21,8 +21,9 @@ class ChatsApi extends KApi {
 }
 
 mixin ChatsApiRequests on ChatsApi {
-  final tasks = KPostRequest(
-    '/chats',
+  late final tasks = KPostRequest(
+    this,
+    path: '/chats',
     decoder: (p0) => ChatModel(),
     resolveRequest: (request) async => request.copyWith(),
   );

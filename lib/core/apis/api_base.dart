@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as dev;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -43,8 +44,6 @@ typedef Any = dynamic;
 /// Use a single shared instance for each API root to avoid cache or state
 /// conflicts between clients.
 
-final _apiKeys = <Enum, String>{};
-
 /// Use only one instance of this class per API root to avoid cache conflicts. For example, if you have a `MainApi` class that extends `KApiBase`, create a single instance of `MainApi` and use it throughout your app.
 abstract class KApiBase {
   KApiBase();
@@ -63,22 +62,32 @@ abstract class KApiBase {
   bool _enabledMonitoring = kDebugMode;
   String _baseUrl = '';
 
+  Dio _primaryDio = Dio();
+  Dio _externalDio = Dio();
+
+  bool _logRequests = kDebugMode;
+  bool _logResponses = kDebugMode;
+
+  @protected
+  bool get logRequests => _logRequests;
+
+  @protected
+  bool get logResponses => _logResponses;
+
   /// [withApiKeys]: A map of API keys to be registered. The keys should implement the [ApiKeyEnum] interface. Remember to register keys for all APIs you intend to use in the system.
   ///
   /// [monitorActivities]: If true, enables monitoring of API activities (only in debug mode).
   /// Don't use syncCacheToStorage yet, not yet implemented!
   Future<void> intialize({
     required String baseUrl,
-    Map<Enum, String>? withApiKeys,
+    bool? logRequests,
+    bool? logResponses,
     bool monitorActivities = kDebugMode,
     String cacheBoxName = kApiCacheBoxName,
     bool syncCacheToStorage = false,
   }) async {
     _enabledMonitoring = monitorActivities;
     _baseUrl = baseUrl;
-    if (withApiKeys != null && withApiKeys.isNotEmpty) {
-      _apiKeys.addAll(withApiKeys);
-    }
     if (_enabledMonitoring) {
       // Start monitoring API activities
     }
@@ -88,11 +97,13 @@ abstract class KApiBase {
     if (syncCacheToStorage) {
       throw UnimplementedError('Cache synchronization to storage is not implemented yet.');
     }
+    if (logRequests != null) _logRequests = logRequests;
+    if (logResponses != null) _logResponses = logResponses;
   }
 
   /// Replaces the primary Dio instance used by requests that opt into it.
-  void setPrimaryDio(Dio dio) => _primary = dio;
+  void setPrimaryDio(Dio dio) => _primaryDio = dio;
 
   /// Replaces the external Dio instance used by requests that opt out of the primary client.
-  void setExternal(Dio dio) => _external = dio;
+  void setExternal(Dio dio) => _externalDio = dio;
 }

@@ -15,7 +15,7 @@ class KResponse<Raw, Formatted> extends Response<Raw> {
     final data = this.data;
     if (data == null || decoder == null) return null;
     try {
-      return decoder!(data);
+      return decoder?.call(data);
     } catch (e) {
       return null;
     }
