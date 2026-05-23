@@ -3,9 +3,8 @@ import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
-import 'package:kickin/core/utilities/result.dart';
 
 const _secureStorage = FlutterSecureStorage();
 
@@ -41,10 +40,10 @@ class KSecureHive<T> {
       dev.log("Secure Hive box was not initialized!");
       return;
     }
-    await _secureBox?.put(key, value);
+    return _secureBox?.put(key, value);
   }
 
-  Future<T?> getData({required String key}) async {
+  T? getData({required String key}) {
     if (_secureBox == null || _secureBox!.isOpen == false) {
       dev.log("Secure Hive box was not initialized!");
       return null;
@@ -52,8 +51,15 @@ class KSecureHive<T> {
     return _secureBox?.get(key);
   }
 
-  Future<bool> resetAll(String acknowledge) => KResult.tryRunAsync(() async {
-    await _secureBox?.clear();
-    await _secureStorage.delete(key: secureCipherKey);
-  }).then((_) => true).catchError((_) => false);
+  Future<bool> resetAll() async {
+    if (_secureBox == null || _secureBox!.isOpen == false) {
+      dev.log("Secure Hive box was not initialized!");
+      return false;
+    }
+    return _secureBox!
+        .clear()
+        .then((_) => _secureStorage.delete(key: secureCipherKey))
+        .then((_) => true)
+        .catchError((_) => false);
+  }
 }

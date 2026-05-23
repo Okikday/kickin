@@ -20,7 +20,8 @@ abstract class KApi<CacheType> {
 
   // void log(String errorOrMsg) => "To be implemented!";
 
-  final id = KApiBase._incrementId;
+  /// If you are using multiple [KApi] instance on the same parent, you must override the id to prevent cache conflicts.
+  late final id = "${_parent.runtimeType}_$runtimeType";
 
   @protected
   String get baseUrl => _parent._baseUrl;
@@ -29,4 +30,17 @@ abstract class KApi<CacheType> {
   CacheType? get cache => _parent._getCache(id);
   @protected
   void setCache(CacheType value) => _parent._setCache(id, value);
+  @protected
+  void clearCache() => _parent._removeCache(id);
+
+  @protected
+  Map<String, String> headerWithJsonContentType([Map<String, String>? headers]) {
+    final h = headers ?? {};
+    h['Content-Type'] = 'application/json';
+    return h;
+  }
+
+  /// Only use when baseUrl is not provided by the parent [KApiBase] or when you want to override it for a specific API client.
+  @protected
+  String joinWithBaseUrl(String endpoint) => "$baseUrl$endpoint";
 }

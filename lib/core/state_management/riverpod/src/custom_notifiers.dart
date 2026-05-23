@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
-import 'package:kickin/core/storage/hive/src/app_hive.dart';
+import 'package:kickin/core/storage/hive/src/hive.dart';
 import 'package:kickin/core/utilities/result.dart';
 
 export 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,7 +89,7 @@ class KSomeAsyncNotifier<T> extends _AsyncBaseNotifier<T> {
 /// [In] is how the data get's stored
 /// [Out] is how the data is output
 class KCachedNotifier<In, Out> extends AsyncNotifier<Out> {
-  static final _hive = KAppHive(boxName: kRiverpodCacheBoxName);
+  static final _hive = AppHive(boxName: kRiverpodCacheBoxName);
   final String _key;
   final Out _defaultValue;
   final bool? isUpdateNotifying;

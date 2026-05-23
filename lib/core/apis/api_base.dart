@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:developer' as dev;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
 import 'package:kickin/core/apis/src/api_response.dart';
+import 'package:kickin/core/storage/hive/kickin_hive.dart';
+import 'package:kickin/core/storage/hive/src/hive.dart';
 
 export 'package:dio/dio.dart' show CancelToken, Options, FileAccessMode;
 
@@ -47,17 +50,63 @@ typedef Any = dynamic;
 /// Use only one instance of this class per API root to avoid cache conflicts. For example, if you have a `MainApi` class that extends `KApiBase`, create a single instance of `MainApi` and use it throughout your app.
 abstract class KApiBase {
   KApiBase();
-  static int _increment = -1;
-  static int get _incrementId => _increment++;
 
   /// =================================================
   /// Private members
   /// =================================================
 
   /// Cache
-  final _cacheMap = <int, Any>{};
-  CacheType? _getCache<CacheType>(int key) => _cacheMap[key] as CacheType?;
-  void _setCache<CacheType>(int key, CacheType value) => _cacheMap[key] = value;
+  final _cacheMap = <String, Any>{};
+  final _pendingWrites = Queue<String>(); // Keys waiting to be flushed
+  Timer? _flushTimer;
+  static const _flushDelay = Duration(milliseconds: 300);
+
+  AppHive? _syncHive; // Set when syncCacheToStorage is enabled
+  bool _syncEnabled = false;
+
+  CacheType? _getCache<CacheType>(String key) => _cacheMap[key] as CacheType?;
+
+  void _setCache<CacheType>(String key, CacheType value) {
+    _cacheMap[key] = value;
+    if (_syncEnabled) _schedulePersist(key);
+  }
+
+  void _removeCache(String id) {
+    _cacheMap.remove(id);
+    if (_syncEnabled) _schedulePersist(id);
+  }
+
+  void _schedulePersist(String key) {
+    if (!_pendingWrites.contains(key)) {
+      _pendingWrites.addLast(key);
+    }
+    _flushTimer?.cancel();
+    _flushTimer = Timer(_flushDelay, _flushPendingWrites);
+  }
+
+  Future<void> _flushPendingWrites() async {
+    if (_pendingWrites.isEmpty || _syncHive == null) return;
+    final hive = _syncHive!;
+    if (!hive.isInitialized) await hive.initialize();
+
+    final keysToFlush = List<String>.from(_pendingWrites);
+    _pendingWrites.clear();
+
+    final kApiBaseKeysKey = "${runtimeType}_keys";
+
+    for (final key in keysToFlush) {
+      final value = _cacheMap[key];
+      if (value != null) {
+        await hive.setData(key: key, value: value);
+      } else {
+        await hive.deleteData(key: key);
+      }
+    }
+
+    // Update the stored key index
+    final liveKeys = _cacheMap.keys.toList();
+    await hive.setData(key: kApiBaseKeysKey, value: liveKeys);
+  }
 
   bool _enabledMonitoring = kDebugMode;
   String _baseUrl = '';
@@ -95,7 +144,10 @@ abstract class KApiBase {
       // Setup the cache box
     }
     if (syncCacheToStorage) {
-      throw UnimplementedError('Cache synchronization to storage is not implemented yet.');
+      if (!kickinCacheHive.isInitialized) await kickinCacheHive.initialize();
+      _syncHive = kickinCacheHive;
+      _syncEnabled = true;
+      await _syncCacheFromStorage(kickinCacheHive);
     }
     if (logRequests != null) _logRequests = logRequests;
     if (logResponses != null) _logResponses = logResponses;
@@ -106,4 +158,14 @@ abstract class KApiBase {
 
   /// Replaces the external Dio instance used by requests that opt out of the primary client.
   void setExternal(Dio dio) => _externalDio = dio;
+
+  Future<void> _syncCacheFromStorage(AppHive hive) async {
+    if (!hive.isInitialized) await hive.initialize();
+    final kApiBaseKeysKey = "${runtimeType}_keys";
+    final storedKeys = hive.getData(key: kApiBaseKeysKey) as List<String>? ?? <String>[];
+    for (final key in storedKeys) {
+      final value = await hive.getData(key: key);
+      if (value != null) _cacheMap[key] = value;
+    }
+  }
 }

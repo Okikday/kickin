@@ -1,5 +1,7 @@
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:kickin/core/storage/hive/src/app_hive.dart';
+import 'package:hive_ce_flutter/hive_ce_flutter.dart';
+import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
+import 'package:kickin/core/storage/hive/src/hive.dart';
+import 'package:kickin/core/storage/hive/src/lazy_hive.dart';
 import 'package:kickin/core/storage/hive/src/secure_hive.dart';
 
 /// Top-level helper to initialize and access app and secure Hive boxes.
@@ -12,13 +14,19 @@ class KHive<T> {
   static bool _hiveInitialized = false;
 
   /// Make sure to initialize [KHive] before using
-  final app = KAppHive<T>();
+  /// You can use this for your general app storage needs.
+  final app = AppHive<T>();
 
   /// Make sure to initialize [KHive] before using
+  /// Use this for sensitive data that requires encryption, like auth tokens or user credentials.
   final secure = KSecureHive<T>();
 
+  /// Make sure to initialize [KHive] before using
+  /// Use this for large data that you want to load lazily, like cached API responses or media metadata.
+  final lazy = KLazyHive<T>();
+
   /// If box was already opened, it does nothing. else, it opens the boxes marked as true
-  Future<void> initialize({bool initApp = true, bool initSecure = true}) async {
+  Future<void> initialize({bool initApp = false, bool initSecure = false, bool initLazy = false}) async {
     if (!_hiveInitialized) {
       await Hive.initFlutter();
       _hiveInitialized = true;
@@ -27,3 +35,5 @@ class KHive<T> {
     if (initSecure && !secure.isInitialized) await secure.initialize();
   }
 }
+
+final kickinCacheHive = AppHive(boxName: kKickinCache);

@@ -1,3 +1,8 @@
+## 0.0.1-dev.21
+- Improved KHive class greatly and added a Lazy hive version
+- Configured syncing api caches to storage
+- Configured whether using baseUrl by default for api requests
+
 ## 0.0.1-dev.20
 - Added extra argument for [_KRestRequest.decoder]
 - Improved docs
