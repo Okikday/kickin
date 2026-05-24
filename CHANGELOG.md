@@ -1,3 +1,7 @@
+## 0.0.1-dev.22
+- Greatly improved the KRestRequest classes and made the main one public
+- Changing network logging options to improved
+
 ## 0.0.1-dev.21
 - Improved KHive class greatly and added a Lazy hive version
 - Configured syncing api caches to storage

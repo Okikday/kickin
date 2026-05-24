@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:developer' as dev;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
+import 'package:kickin/core/apis/models/log_options.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
 import 'package:kickin/core/apis/src/api_response.dart';
 import 'package:kickin/core/storage/hive/kickin_hive.dart';
 import 'package:kickin/core/storage/hive/src/hive.dart';
+import 'package:kickin/core/utilities/result.dart';
 
 export 'package:dio/dio.dart' show CancelToken, Options, FileAccessMode;
 
@@ -114,29 +115,22 @@ abstract class KApiBase {
   Dio _primaryDio = Dio();
   Dio _externalDio = Dio();
 
-  bool _logRequests = kDebugMode;
-  bool _logResponses = kDebugMode;
-
-  @protected
-  bool get logRequests => _logRequests;
-
-  @protected
-  bool get logResponses => _logResponses;
+  LogOptions _logOptions = const LogOptions();
 
   /// [withApiKeys]: A map of API keys to be registered. The keys should implement the [ApiKeyEnum] interface. Remember to register keys for all APIs you intend to use in the system.
   ///
   /// [monitorActivities]: If true, enables monitoring of API activities (only in debug mode).
   /// Don't use syncCacheToStorage yet, not yet implemented!
   Future<void> intialize({
-    required String baseUrl,
-    bool? logRequests,
-    bool? logResponses,
+    /// It prefixes all requests with the provided baseUrl. If not provided or is empty, nothing get's prefixed
+    String? baseUrl,
     bool monitorActivities = kDebugMode,
     String cacheBoxName = kApiCacheBoxName,
     bool syncCacheToStorage = false,
+    LogOptions logOptions = const LogOptions(),
   }) async {
     _enabledMonitoring = monitorActivities;
-    _baseUrl = baseUrl;
+    _baseUrl = baseUrl ?? '';
     if (_enabledMonitoring) {
       // Start monitoring API activities
     }
@@ -149,8 +143,7 @@ abstract class KApiBase {
       _syncEnabled = true;
       await _syncCacheFromStorage(kickinCacheHive);
     }
-    if (logRequests != null) _logRequests = logRequests;
-    if (logResponses != null) _logResponses = logResponses;
+    _logOptions = logOptions;
   }
 
   /// Replaces the primary Dio instance used by requests that opt into it.

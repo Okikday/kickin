@@ -85,7 +85,7 @@ class KResult<T> {
 
   static FutureOr<KResult<T>> tryRunEither<T>(FutureOr<T?> Function() operation, {bool logError = true}) async {
     try {
-      return KResult.success((operation is Future ? await operation() : operation()) as T);
+      return KResult.success((await operation()) as T);
     } catch (e, st) {
       if (logError) {
         log("Result tryRunEither error: ${e.toString()}", error: e, stackTrace: st);

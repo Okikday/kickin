@@ -15,8 +15,12 @@ class ChatsApi extends KApi<Map> {
     this,
     path: '/chats',
     decoder: (data, r) => r.data,
-    resolveRequest: (request) async => request.copyWith(),
+    resolve: (request) async => request.copyWith(),
   );
+
+  late final restTest = KRestRequest(this, path: '');
+  late final restTest2 = KGetRequest.from(restTest, resolve: (p0) => p0.copyWith());
+  late final postTest = KPostRequest(this, path: '', resolve: (r) => r.copyWith());
 
   Future<String> fetchData() async {
     log(cache.toString());
