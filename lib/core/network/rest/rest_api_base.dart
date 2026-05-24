@@ -4,9 +4,9 @@ import 'dart:collection';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
-import 'package:kickin/core/apis/models/log_options.dart';
+import 'package:kickin/core/network/rest/models/log_options.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
-import 'package:kickin/core/apis/src/api_response.dart';
+import 'package:kickin/core/network/rest/src/api_response.dart';
 import 'package:kickin/core/storage/hive/kickin_hive.dart';
 import 'package:kickin/core/storage/hive/src/hive.dart';
 import 'package:kickin/core/utilities/result.dart';
@@ -17,7 +17,7 @@ part 'src/api_monitor_mixin.dart';
 
 part 'src/rest_request.dart';
 
-part 'api.dart';
+part 'rest_api.dart';
 
 typedef Any = dynamic;
 
@@ -49,8 +49,8 @@ typedef Any = dynamic;
 /// conflicts between clients.
 
 /// Use only one instance of this class per API root to avoid cache conflicts. For example, if you have a `MainApi` class that extends `KApiBase`, create a single instance of `MainApi` and use it throughout your app.
-abstract class KApiBase {
-  KApiBase();
+abstract class KRestApiBase {
+  KRestApiBase();
 
   /// =================================================
   /// Private members

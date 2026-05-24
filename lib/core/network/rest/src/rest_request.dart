@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 // remember variants
-part of '../api_base.dart';
+part of '../rest_api_base.dart';
 
 enum RequestMethod { GET, POST, PATCH, PUT, DELETE, DOWNLOAD, REQUEST }
 
@@ -21,7 +21,7 @@ class KRestRequest<TDecoded> {
     this.useBaseUrl = true,
   });
 
-  final KApi _api;
+  final KRestApi _api;
   final String path;
   final bool usePrimary;
   final Map<String, String>? headers;
@@ -33,8 +33,8 @@ class KRestRequest<TDecoded> {
 
   final LogOptions? logOptions;
 
-  /// Set to true by default. You can set to false if you don't want to append with the baseUrl from the parent [KApiBase] and want to provide a full URL in [path] instead.
-  /// Doesn't have any effect if the [KApiBase] doesn't have a [baseUrl] configured, in which case the [path] is used as-is regardless of this flag.
+  /// Set to true by default. You can set to false if you don't want to append with the baseUrl from the parent [KRestApiBase] and want to provide a full URL in [path] instead.
+  /// Doesn't have any effect if the [KRestApiBase] doesn't have a [baseUrl] configured, in which case the [path] is used as-is regardless of this flag.
   final bool useBaseUrl;
 
   /// Converts the raw Dio response payload into the client-facing output type.
@@ -47,7 +47,7 @@ class KRestRequest<TDecoded> {
   /// Builds the shared Dio [Options] object with any overridden headers.
   Options get _requestOptions => options?.copyWith(headers: headers) ?? Options(headers: headers);
 
-  KApiBase get _apiBase => _api._parent;
+  KRestApiBase get _apiBase => _api._parent;
 
   /// Builds a fallback [RequestOptions] object for error handling and offline decodes.
   RequestOptions _requestOptionsFor(String method) => RequestOptions(

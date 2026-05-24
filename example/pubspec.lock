@@ -226,26 +226,26 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage
-      sha256: "6848263f9744072d0977347c383fb8b57d9780319a6bf5238b5a2866a029de62"
+      sha256: d2a6ac2df7353f5ca47eb159a5407c1dba7ec48ca0e02dc38c9ff4d29447b261
       url: "https://pub.dev"
     source: hosted
-    version: "10.2.0"
+    version: "10.3.0"
   flutter_secure_storage_darwin:
     dependency: transitive
     description:
       name: flutter_secure_storage_darwin
-      sha256: "67cd1ff671add31dc13e45194398187a04bb63804b37fa47866afae296d73fcb"
+      sha256: "82329fa5cdf343773b1b6897dea959105a29f092454259edff92f9f6637e8149"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.1"
+    version: "0.3.2"
   flutter_secure_storage_linux:
     dependency: transitive
     description:
       name: flutter_secure_storage_linux
-      sha256: "2b5c76dce569ab752d55a1cee6a2242bcc11fdba927078fb88c503f150767cda"
+      sha256: a5f35ddab43cf5c8215d2feb4ce1957851f28c5c37e6f04335066a0602087bf5
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   flutter_secure_storage_platform_interface:
     dependency: transitive
     description:
@@ -304,22 +304,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
-  hive:
+  hive_ce:
     dependency: transitive
     description:
-      name: hive
-      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
+      name: hive_ce
+      sha256: "8e9980e68643afb1e765d3af32b47996552a64e190d03faf622cea07c1294418"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.3"
-  hive_flutter:
+    version: "2.19.3"
+  hive_ce_flutter:
     dependency: transitive
     description:
-      name: hive_flutter
-      sha256: dca1da446b1d808a51689fb5d0c6c9510c0a2ba01e22805d492c73b68e33eecc
+      name: hive_ce_flutter
+      sha256: "2677e95a333ff15af43ccd06af7eb7abbf1a4f154ea071997f3de4346cae913a"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "2.3.4"
   hooks:
     dependency: transitive
     description:
@@ -360,6 +360,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  isolate_channel:
+    dependency: transitive
+    description:
+      name: isolate_channel
+      sha256: a9d3d620695bc984244dafae00b95e4319d6974b2d77f4b9e1eb4f2efe099094
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.1"
   jni:
     dependency: transitive
     description:
@@ -376,13 +384,21 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      sha256: "2a743920d81b7910627f68ee2c9ac1fc0bfee32b9fc3403587d7c6791ca12f80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.12.0"
   kickin:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1-dev.7"
+    version: "0.0.1-dev.23"
   leak_tracker:
     dependency: transitive
     description:

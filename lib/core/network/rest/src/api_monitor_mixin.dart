@@ -1,4 +1,4 @@
-part of '../api_base.dart';
+part of '../rest_api_base.dart';
 
 // mixin _ApiMonitor on Api {
 //   void addListener(void Function() listener) {

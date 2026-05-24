@@ -1,3 +1,6 @@
+## 0.0.1-dev.23
+- Updated documentation
+
 ## 0.0.1-dev.22
 - Greatly improved the KRestRequest classes and made the main one public
 - Changing network logging options to improved

@@ -1,8 +1,8 @@
-part of 'api_base.dart';
+part of 'rest_api_base.dart';
 
-/// Base class for concrete API clients owned by an [KApiBase].
+/// Base class for concrete API clients owned by an [KRestApiBase].
 ///
-/// Subclasses receive their parent [KApiBase] through the constructor and can
+/// Subclasses receive their parent [KRestApiBase] through the constructor and can
 /// read shared state such as [baseUrl] and per-client cache values from it.
 ///
 /// Example:
@@ -14,13 +14,13 @@ part of 'api_base.dart';
 ///
 /// Use this for API modules that need access to the shared base
 /// configuration.
-abstract class KApi<CacheType> {
-  final KApiBase _parent;
-  KApi(this._parent);
+abstract class KRestApi<CacheType> {
+  final KRestApiBase _parent;
+  KRestApi(this._parent);
 
   // void log(String errorOrMsg) => "To be implemented!";
 
-  /// If you are using multiple [KApi] instance on the same parent, you must override the id to prevent cache conflicts.
+  /// If you are using multiple [KRestApi] instance on the same parent, you must override the id to prevent cache conflicts.
   late final id = "${_parent.runtimeType}_$runtimeType";
 
   @protected
@@ -40,7 +40,7 @@ abstract class KApi<CacheType> {
     return h;
   }
 
-  /// Only use when baseUrl is not provided by the parent [KApiBase] or when you want to override it for a specific API client.
+  /// Only use when baseUrl is not provided by the parent [KRestApiBase] or when you want to override it for a specific API client.
   @protected
   String joinWithBaseUrl(String endpoint) => "$baseUrl$endpoint";
 }

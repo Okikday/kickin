@@ -33,6 +33,7 @@ class KAdaptiveImage extends StatelessWidget {
   final int? cacheWidth;
   final int? cacheHeight;
   final FilterQuality filterQuality = FilterQuality.medium;
+  final bool preferLocal;
 
   const KAdaptiveImage({
     super.key,
@@ -47,11 +48,12 @@ class KAdaptiveImage extends StatelessWidget {
     this.centerSlice,
     this.cacheWidth,
     this.cacheHeight,
+    this.preferLocal = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final rPath = path.resolve();
+    final rPath = path.resolve(preferLocal: preferLocal);
     final src = rPath.data;
     final isLocal = rPath.isLocal;
 

@@ -19,6 +19,10 @@ class KTopPadding extends StatelessWidget {
           )
         : SizedBox(height: withTopPadding);
   }
+
+  static SliverToBoxAdapter sliver({double? withHeight, Widget? child}) => SliverToBoxAdapter(
+    child: KTopPadding(withHeight: withHeight, child: child),
+  );
 }
 
 /// Adds bottom padding equal to the system bottom inset (keyboard, nav bar)
@@ -44,4 +48,8 @@ class KBottomPadding extends StatelessWidget {
           )
         : SizedBox(height: bottomPadding + (withHeight ?? 0.0));
   }
+
+  static SliverToBoxAdapter sliver({double? withHeight, Widget? child}) => SliverToBoxAdapter(
+    child: KBottomPadding(withHeight: withHeight, child: child),
+  );
 }

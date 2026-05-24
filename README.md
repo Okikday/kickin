@@ -1,25 +1,149 @@
-# Kickin (#experimental)
+# 🦵 Kickin (#experimental)
 
-Kickin is a toolkit that removes Flutter boilerplate with utilities, extensions, and opinionated wrappers for common tools (state, storage, etc.), so you can get started quickly by adding the package.
+Kickin is a modern modular toolkit designed to turbocharge your Flutter development and eliminate boilerplate. It provides curated utilities, elegant extensions, and standardized architectures for common tasks like networking, state management, and storage.
 
-also for users that use [custom_widgets_toolkit](https://pub.dev/packages/custom_widgets_toolkit)
-#note documentation doesn't currently capture every feature or usage
-Features
-- Boilerplate-free architecture: Helpers and mixins that tackle daily repetitive code
-- Wrappers for popular tools: Ergonomic APIs for state management (e.g. Riverpod) and storage libraries (e.g. Hive)
-- KResult wrapper for safe and predictable async operations
-- KIsolate helpers for background work with progress reporting
-- Handy extensions for `BuildContext`, `num`, `String`, providers, durations etc
-- Useful widgets: `KAnimatedSizing`, `KScaleGestureWrapper`, `KSmoothListView`, `KAdaptiveImage`, `KScaffold`, and more
+Zero lock-in. While Kickin provides opinionated wrappers for popular tools (like Riverpod or Hive), it is designed to be **universally adoptable** and highly extensible. You can use it piece-by-part—select the core extensions, use the network module independently, or fully embrace the architecture.
 
-Quick install
+---
+
+## 🎯 Modules at a Glance
+
+### 🌐 Network
+A unified layer for all remote communication, adaptable to different protocols.
+
+* **REST APIs**
+  A robust and extensible wrapper over Dio to handle HTTP requests gracefully with structured error handling, caching, logging, and decoding.
+  * **Key Classes:** `KRestApiBase`, `KRestApi`, `KRestRequest`, `KResponse`
+  * **Usage:**
+    ```dart
+    class MyApi extends KRestApiBase {
+      static final kick = MyApi._();
+      MyApi._();
+
+      // make sure to initialize in main()
+      // e.g. MyApi.kick.initialize(baseUrl: 'https://api.myapp.com', logOptions: LogOptions.debugAll());
+      
+      late final users = UsersApi(this);
+    }
+    
+    class UsersApi extends KRestApi<Map<String, dynamic>> {
+      UsersApi(super.parent);
+
+      // You can also choose to cache your data as they come in
+      
+
+      /// You can also make this a getter instead of late final incase you need to pass a data(body)
+      late final _getUser = KGetRequest(
+        this, 
+        path: '/user', 
+        resolve: (r) async => r.copyWith(headers: await loadAuthHeaders()),
+        decoder: (data, _) => User.fromJson(data),
+      );
+
+      Future getUser () => _getUser.get();
+    }
+
+    // Call securely and retrieve the decoded data
+    final user = await MyApi.kick.users.getUser(); 
+    ```
+
+### 💾 Storage
+A unified abstraction for local persistent storage, architected to support multiple drivers smoothly.
+
+* **Hive**
+  A fast key-value storage implementation powered by Hive. Includes app-level, secure, and lazy options.
+  * **Key Classes:** `KHive`, `KSecureHive`, `KLazyHive`
+  * **Usage:**
+    ```dart
+    // Initialize at app startup
+    enum KHiveKeys{theme}
+    await KHive.on.initialize(initApp: true);
+
+    // Save and retrieve anywhere safely
+    await KHive.on.app.setData(key: KHiveKeys.theme.name, value: 'dark');
+    final theme = KHive.on.app.getData(key: 'theme'); // or KHiveKeys.theme.name
+    ```
+
+### 🧠 State Management
+Streamlined, ergonomic, and boilerplate-free APIs to bind your favorite state management solutions to the UI.
+
+* **Riverpod**
+  Effortless provider binding without needing a verbose `ConsumerWidget` wrapper.
+  * **Key Classes:** `KAbsorber`, `KAbsorbRead`, `KAbsorbWatch`, `KWatchNotifier`, `KCachedNotifier`
+  * **Usage:**
+    ```dart
+    KAbsorber.watch(
+      userProvider,
+      builder: (ref, user, child) {
+         return Text(user.name);
+      }
+    )
+
+    final user = userProvider.read(ref);
+    ```
+
+### ⚙️ Utilities
+Essential and predictable helpers for async operations and heavy background tasks.
+
+* **Concurrency & Operations**
+  Tools to perform safe operations and background work.
+  * **Key Classes:** `KResult` (safe operations without try-catch), `KIsolate` (background work), `KLogger`
+  * **Usage:**
+    ```dart
+    final result = await KResult.tryRunAsync(() => fetchComplexData());
+    
+    if (result.isSuccess) {
+      print(result.data);
+    } else {
+      showError(result.message);
+    }
+    ```
+
+### 🧩 Extensions & Mixins
+Banish verbose code with intuitive extensions on built-in types. Plus, reusable mixins to inject intelligence into Widgets and Notifiers.
+
+* **Core Extensions**
+  * **Key Classes:** Context extensions, `Duration` extensions, `ProviderWarmupMixin`, `ScrollOffsetNotifierMixin`
+  * **Usage:**
+    ```dart
+    // Elegant structural spacing
+    24.toVBox, // No more SizedBox(height: 24)
+    16.toHBox, // No more SizedBox(width: 16)
+
+    // Quick context helpers
+    final isDark = context.isDarkMode;
+    final screenWidth = context.deviceWidth;
+    final topPadding = context.topPadding;
+    ```
+
+### 🎨 Widgets & Motion
+A collection of smart, adaptable UI components and pre-defined motion tokens for fluid experiences.
+
+* **Layout & Components**
+  * **Key Classes:** `KScaffold`, `KAnimatedSizing`, `KScaleGestureWrapper`, `KSmoothListView`, `KAdaptiveImage`, `KSpacing`, `KCurves`
+  * **Usage:**
+    ```dart
+    KScaffold(
+      title: 'Home',
+      body: KSmoothListView(
+        children: [
+          KTopPadding.sliver(),
+          KAdaptiveImage(path: FilePath(path: localPath, url:"https://..."), preferLocal: true),
+          KBottomPadding.sliver(),
+        ],
+      ),
+    );
+
+    ```
+
+---
+
+## 📦 Installation
 
 Add the package to your app dependencies:
 
 ```yaml
 dependencies:
-  flutter:
-    sdk: flutter
   kickin: 0.0.1-dev.22
 ```
 
@@ -29,219 +153,5 @@ Then import the package root API where needed:
 import 'package:kickin/kickin.dart';
 ```
 
-Getting started
-
-Initialize the persistent storage driver (e.g. Hive) if you intend to use the built-in storage features:
-
-```dart
-await KHive.on.initialize();
-KHive.on.app.setData(key: key, value: value);
-```
-
-REST API request example:
-
-```dart
-final request = KGetRequest<Map<String, dynamic>, Map<String, dynamic>>(
-  '/users/1',
-  decode: (data) => data,
-);
-
-final user = await request.copyWith(headers: {...}).get();
-```
-
-API summary
-
-The public API is intentionally compact and centered around a few high-value areas:
-
-- Core APIs: `ApiBase`, `Api`, `ApiKeyEnum`
-- Base helpers: extensions for context, durations, strings, numbers, providers, and widgets; plus reusable mixins
-- State management: `KAbsorber`, `KAbsorbRead`, `KAbsorbWatch`, `KWatchNotifier`, and `KCachedNotifier`
-- Storage: `KHive`
-- Utilities: `KResult`, `KIsolate`, `KIsolateContinuous`, `KIsolateAccess`, `KIsolateException`, `KWorkPriority`
-- Motion and layout: `KCurves`, `KSpacing`
-- Widgets: `KAnimatedSizing`, `KScaleGestureWrapper`, `KTopPadding`, `KBottomPadding`, `KText`, `KSmoothListView`, `KSmoothCustomScrollView`, `KAdaptiveImage`, `ImageFromMemory`, `KFilePath`, and `KScaffold`
-
-Examples
-
-Extensions & context helpers
-
-```dart
-// Elegant spacing in rows/columns
-Widget build(BuildContext c) => Column(
-  children: [
-    const Text('Top'),
-    24.toVBox, // No more verbose SizedBox(height: 24)
-    const Text('Bottom'),
-  ],
-);
-
-// Access media queries and theme securely with zero boilerplate
-final isDark = context.isDarkMode;
-final screenWidth = context.deviceWidth;
-final topPadding = context.topPadding;
-
-// Shared spacing and motion tokens
-final gutter = KSpacing.md;
-final easing = KCurves.fastInSlowOut;
-```
-
-App shell and scaffold
-
-```dart
-KScaffold.appBarBuilder = someWidget;
-KScaffold(
-  title: 'Home',
-  footer: Padding(
-    padding: EdgeInsets.all(KSpacing.md),
-    child: KText('Built with Kickin'),
-  ),
-  body: Center(
-    child: AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      curve: KCurves.fastInSlowOut,
-      padding: EdgeInsets.all(KSpacing.lg),
-      child: KText('Fast, consistent UI shells'),
-    ),
-  ),
-)
-```
-
-State Management & Offline Storage
-
-```dart
-// 1. A Notifier that auto-magically persists to local storage (Hive, etc.)
-class ThemeModeNotifier extends KCachedNotifier<String, ThemeMode> {
-  ThemeModeNotifier() : super( 
-    ThemeMode.system,
-    encode: (mode) => mode.name,
-    decode: (raw) => ThemeMode.values.byName(raw ?? 'system'),
-  );
-}
-
-// 2. Pre-built standard notifiers to avoid repetitive boilerplate (riverpod 3.0+)
-final counterProvider = NotifierProvider<IntNotifier, int>(() => IntNotifier(0));
-final userProvider = NotifierProvider<SomeNotifier<User?>, User?>(() => SomeNotifier(null));
-
-// Update values easily:
-// ref.read(counterProvider.notifier).set(5);
-// ref.read(counterProvider.notifier).update((state) => state + 1);
-
-// 3. Surgical rebuilds using KAbsorber without ConsumerWidget boilerplate
-Widget build(BuildContext context) {
-  return KAbsorber.watch(
-    themeProvider,
-    builder: (ref, theme, _) => MaterialApp(
-      themeMode: theme, // Now responsive to changes
-      home: const Home(),
-    ),
-  );
-}
-```
-
-Safe Async Operations (Result)
-
-Avoid endless `try-catch` blocks and effectively manage data/loading/error states.
-
-```dart
-Future<KResult<User>> fetchUser(String id) async {
-  return KResult.tryRunAsync(() async {
-    final response = await api.getUser(id);
-    return User.fromJson(response);
-  }).then((user) async {
-    await cache.save(user); // Chained safely. Skipped if error occurred above.
-    return user;
-  });
-}
-```
-
-Heavy Background Workers (Smart Isolate)
-
-Run intense workloads safely away from the main thread without stuttering the UI. Send progress updates back to the UI in real-time.
-
-```dart
-// Execute right away with progress reporting 
-final compressedBytes = await KIsolate.run<Uint8List, double, Uint8List>(
-  (imageBytes, emit) async {
-    emit(0.2); // Notify UI: 20% done
-    final processed = await heavyImageCompression(imageBytes);
-    emit(1.0); // Notify UI: 100% done
-    return processed;
-  },
-  rawImageBytes,
-  onProgress: (percent) => print('Compressing: ${percent * 100}%'),
-);
-
-// Or create a continuous background worker with a priority queue
-final imageWorker = await KIsolateContinuous.spawn<ImageTask, ImageResult>(
-  (register) async {
-    final decoder = await setupHeavyModel(); // Run once initialization
-    register((task, respond) => respond(decoder.process(task)));
-  },
-);
-
-imageWorker.execute(task, priority: WorkPriority.high);
-```
-
-Widgets & UI interactions
-
-```dart
-// Bouncy, squishy, and hyper-interactive buttons out of the box
-KScaleGestureWrapper(
-  onTapUp: (details) => navigateToDetails(),
-  scaleBetween: (1.0, 0.92),
-  child: KAnimatedSizing.fast(
-    child: Card(
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: KText('Squish me!', fontWeight: FontWeight.bold),
-      ),
-    ),
-  ),
-);
-
-// Mac/Windows-like buttery-smooth momentum scrolling on desktop platforms.
-// Automatically falls back to native physics on mobile!
-KSmoothListView.builder(
-  mode: SmoothScrollMode.auto,
-  intensity: ScrollIntensity.slow,
-  itemCount: 100,
-  itemBuilder: (context, index) => ListTile(
-    leading: KAdaptiveImage(
-      path: KFilePath(url: 'https://...', local: 'assets/fallback.png'),
-      fallbackWidget: const Icon(Icons.error),
-    ),
-    title: Text('Item $index'),
-  ),
-);
-```
-
-Documentation & examples
-
-Use the root import for the public surface:
-
-```dart
-import 'package:kickin/kickin.dart';
-```
-
-The examples above cover the main patterns. For implementation details, keep exploring the package API from there.
-
-Changelog
-
-See the changelog for version history.
-
-License
-
-This project is available under the license terms.
-
-Maintainers
-
-<div align="center">
-  <div style="display:inline-block;padding:10px;border-radius:999px;background:linear-gradient(135deg, rgba(15,23,42,0.08), rgba(59,130,246,0.18));box-shadow:0 10px 30px rgba(15,23,42,0.12);">
-    <a href="https://github.com/okikday" aria-label="okikday on GitHub">
-      <img src="https://github.com/okikday.png" width="96" height="96" style="display:block;border-radius:999px;object-fit:cover;border:3px solid rgba(255,255,255,0.85);" alt="okikday" />
-    </a>
-  </div>
-  <div style="margin-top:10px;font-weight:700;">okikday</div>
-  <div style="font-size:0.95em;opacity:0.75;">Maintainer</div>
-</div>
+## 🚀 Vision
+Kickin is designed to act as **parts of a broader whole**. You can adopt the Network module and ignore the Storage module; use the Extensions but skip the Widgets. It's built for rapid prototyping while being sufficiently robust for large-scale production applications. Start coding faster, with absolute confidence.
