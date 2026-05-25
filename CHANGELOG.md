@@ -1,3 +1,7 @@
+## 0.0.1-dev.26
+- Added missing arguments for some KRestRequest classes
+- Fixed where path isn't properly configured in some cases.
+
 ## 0.0.1-dev.25
 - Added a LogOptions for normal network logs
 - Fixed issue where headers don't get propageted to requests

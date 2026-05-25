@@ -144,7 +144,7 @@ Add the package to your app dependencies:
 
 ```yaml
 dependencies:
-  kickin: 0.0.1-dev.25
+  kickin: 0.0.1-dev.26
 ```
 
 Then import the package root API where needed:
