@@ -2,7 +2,7 @@
 
 Kickin is a modern modular toolkit designed to turbocharge your Flutter development and eliminate boilerplate. It provides curated utilities, elegant extensions, and standardized architectures for common tasks like networking, state management, and storage.
 
-Zero lock-in. While Kickin provides opinionated wrappers for popular tools, it is designed to be **universally adoptable** and highly extensible. You can use it piece-by-part—select the core extensions, use the network module independently, or fully embrace the architecture.
+Zero lock-in. While Kickin provides opinionated wrappers for popular tools, it is designed to be **universally adoptable** and highly extensible. You can use it piece-by-part (select the core extensions), use the network module independently, or fully embrace the architecture.
 
 ---
 
@@ -144,7 +144,7 @@ Add the package to your app dependencies:
 
 ```yaml
 dependencies:
-  kickin: 0.0.1-dev.26
+  kickin: 0.0.1-dev.27
 ```
 
 Then import the package root API where needed:

@@ -11,7 +11,6 @@ import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
 
 import 'package:kickin/core/storage/hive/kickin_hive.dart';
 import 'package:kickin/core/storage/hive/src/hive.dart';
-import 'package:kickin/core/utilities/result.dart';
 
 export 'package:dio/dio.dart' show CancelToken, Options, FileAccessMode;
 

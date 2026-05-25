@@ -14,7 +14,18 @@ class _DevLogOutput extends LogOutput {
 class NetworkLog {
   static final Logger _logger = Logger(
     filter: ProductionFilter(),
-    printer: PrettyPrinter(methodCount: 0, errorMethodCount: 5, printEmojis: true, colors: true, lineLength: 80),
+    printer: PrettyPrinter(
+      methodCount: 0,
+      errorMethodCount: 5,
+      printEmojis: true,
+      colors: true,
+      lineLength: 80,
+      levelColors: const {
+        Level.info: AnsiColor.fg(6), // Cyan for Requests
+        Level.debug: AnsiColor.fg(2), // Green for Success Responses
+        Level.error: AnsiColor.fg(1), // Red for Error Responses
+      },
+    ),
     output: _DevLogOutput(name: 'kickin.network'),
   );
 

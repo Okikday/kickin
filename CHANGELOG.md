@@ -1,3 +1,6 @@
+## 0.0.1-dev.27
+- Fixed the issue with headers not properly propagating for the requests
+
 ## 0.0.1-dev.26
 - Added missing arguments for some KRestRequest classes
 - Fixed where path isn't properly configured in some cases.

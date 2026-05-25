@@ -224,7 +224,7 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
     headers: headers ?? this.headers,
     data: data ?? this.data,
     queryParams: queryParams ?? this.queryParams,
-    options: options ?? this.options,
+    options: headers != null ? options : (options ?? this.options),
     cancelToken: cancelToken ?? this.cancelToken,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolve: resolve,
@@ -315,7 +315,7 @@ class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: options ?? this.options,
+    options: headers != null ? options : (options ?? this.options),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     onSendProgress: onSendProgress ?? this.onSendProgress,
@@ -409,7 +409,7 @@ class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: options ?? this.options,
+    options: headers != null ? options : (options ?? this.options),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     onSendProgress: onSendProgress ?? this.onSendProgress,
@@ -503,7 +503,7 @@ class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: options ?? this.options,
+    options: headers != null ? options : (options ?? this.options),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     onSendProgress: onSendProgress ?? this.onSendProgress,
@@ -591,7 +591,7 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: options ?? this.options,
+    options: headers != null ? options : (options ?? this.options),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     resolve: resolve,
@@ -687,6 +687,7 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
     path: pathTransform?.call(path) ?? path,
     savePath: savePath ?? this.savePath,
     usePrimary: usePrimary ?? this.usePrimary,
+    // options: headers != null ? options : (options ?? this.options),
     options: options ?? this.options,
     queryParams: queryParams ?? this.queryParams,
     cancelToken: cancelToken ?? this.cancelToken,
@@ -744,7 +745,7 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
   final FutureOr<KRequest<TDecoded>> Function(KRequest<TDecoded>)? resolve;
 
   Future<KResponse<Raw, TDecoded>> _request<Raw>(bool tryRun) async {
-    final r = resolve == null ? null : (await KResult.tryRunEither<KRequest<TDecoded>>(() => resolve!(this))).data;
+    final r = resolve == null ? null : await resolve!(this);
 
     final response = _dio.request<Raw>(
       r?.transformedPath ?? _transformedPath,
@@ -782,7 +783,7 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
     headers: headers ?? this.headers,
     data: data ?? this.data,
     queryParams: queryParams ?? this.queryParams,
-    options: options ?? this.options,
+    options: headers != null ? options : (options ?? this.options),
     cancelToken: cancelToken ?? this.cancelToken,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
     resolve: resolve,
