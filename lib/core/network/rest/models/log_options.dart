@@ -6,6 +6,8 @@ class LogOptions {
   final Set<LogPart> parts;
   final int maxLogLength;
 
+  const LogOptions.none() : this(parts: const {}, maxLogLength: 0);
+
   const LogOptions({this.parts = const {LogPart.queryParams}, this.maxLogLength = 1024});
 
   factory LogOptions.debugAll() => LogOptions(parts: LogPart.values.toSet());
@@ -15,4 +17,7 @@ class LogOptions {
 
   factory LogOptions.debugResponse() =>
       const LogOptions(parts: {LogPart.responseHeaders, LogPart.responseBody, LogPart.errors});
+
+  const LogOptions.normal()
+    : this(parts: const {LogPart.queryParams, LogPart.requestHeaders, LogPart.requestBody, LogPart.responseBody});
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -129,7 +130,7 @@ abstract class KRestApiBase {
     bool monitorActivities = kDebugMode,
     String cacheBoxName = kApiCacheBoxName,
     bool syncCacheToStorage = false,
-    LogOptions logOptions = const LogOptions(),
+    LogOptions logOptions = const LogOptions.normal(),
   }) async {
     _enabledMonitoring = monitorActivities;
     _baseUrl = baseUrl ?? '';

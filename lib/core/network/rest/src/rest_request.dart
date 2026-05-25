@@ -12,18 +12,20 @@ class KRestRequest<TDecoded> {
     this.usePrimary = true,
     this.headers,
     this.data,
-    this.options,
+    Options? options,
     this.queryParams,
     this.cancelToken,
     this.onReceiveProgress,
     this.decoder,
     this.logOptions,
     this.useBaseUrl = true,
-  });
+  }) : options = options?.copyWith(headers: headers) ?? Options(headers: headers);
 
   final KRestApi _api;
   final String path;
   final bool usePrimary;
+
+  /// It will replace the one in [Options.headers], don't provide if you wish to use the one in the Options
   final Map<String, String>? headers;
   final Object? data;
   final Options? options;
@@ -43,9 +45,6 @@ class KRestRequest<TDecoded> {
 
   /// Selects the Dio instance that matches [usePrimary].
   Dio get _dio => usePrimary ? _api._parent._primaryDio : _api._parent._externalDio;
-
-  /// Builds the shared Dio [Options] object with any overridden headers.
-  Options get _requestOptions => options?.copyWith(headers: headers) ?? Options(headers: headers);
 
   KRestApiBase get _apiBase => _api._parent;
 
@@ -97,6 +96,8 @@ class KRestRequest<TDecoded> {
   KRequest<TDecoded> toRequest() => KRequest<TDecoded>.from(this);
 
   void _logRequest(LogOptions logOptions, String method) {
+    if (logOptions.parts.isEmpty) return;
+
     final Map<String, dynamic> output = {};
 
     if (logOptions.parts.contains(LogPart.queryParams) && queryParams != null) {
@@ -109,10 +110,18 @@ class KRestRequest<TDecoded> {
       output['Headers'] = headers;
     }
 
-    NetworkLog.request('Request($method): $_transformedPath\n$output');
+    final title = 'Request($method): $_transformedPath';
+    if (output.isNotEmpty) {
+      final prettyJson = const JsonEncoder.withIndent('  ').convert(output);
+
+      NetworkLog.request('$title\n$prettyJson');
+    } else {
+      NetworkLog.request(title);
+    }
   }
 
   void _logResponse<Raw>(LogOptions logOptions, String method, dynamic result) {
+    if (logOptions.parts.isEmpty) return;
     final bool isOk = result.statusCode != null && result.statusCode! >= 200 && result.statusCode! < 300;
     final Map<String, dynamic> output = {};
 
@@ -136,11 +145,17 @@ class KRestRequest<TDecoded> {
 
     final title = 'Response(${result.statusCode ?? 'ERR'}): $_transformedPath';
 
+    final prettyJson = output.isNotEmpty ? '\n${const JsonEncoder.withIndent('  ').convert(output)}' : '';
+
     if (isOk) {
-      NetworkLog.success('$title\n$output');
+      NetworkLog.success('$title$prettyJson');
     } else {
-      NetworkLog.error('$title\n$output');
+      NetworkLog.error('$title$prettyJson');
     }
+  }
+
+  String toString() {
+    return 'KRestRequest(path: $path, usePrimary: $usePrimary, headers: $headers, data: $data, options: $options, queryParams: $queryParams, cancelToken: $cancelToken, onReceiveProgress: $onReceiveProgress, logOptions: $logOptions, useBaseUrl: $useBaseUrl)';
   }
 }
 
@@ -172,7 +187,7 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
 
     final response = _dio.get<Raw>(
       r?.path ?? _transformedPath,
-      options: r?.options ?? _requestOptions,
+      options: r?.options ?? options,
       data: r?.data ?? data,
       queryParameters: r?.queryParams ?? queryParams,
       cancelToken: r?.cancelToken ?? cancelToken,
@@ -266,7 +281,7 @@ class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
 
     final response = _dio.post<Raw>(
       r?.path ?? _transformedPath,
-      options: r?.options ?? _requestOptions,
+      options: r?.options ?? options,
       data: r?.data ?? data,
       queryParameters: r?.queryParams ?? queryParams,
       cancelToken: r?.cancelToken ?? cancelToken,
@@ -360,7 +375,7 @@ class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
 
     final response = _dio.put<Raw>(
       r?.path ?? _transformedPath,
-      options: r?.options ?? _requestOptions,
+      options: r?.options ?? options,
       data: r?.data ?? data,
       queryParameters: r?.queryParams ?? queryParams,
       cancelToken: r?.cancelToken ?? cancelToken,
@@ -454,7 +469,7 @@ class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
 
     final response = _dio.patch<Raw>(
       r?.path ?? _transformedPath,
-      options: r?.options ?? _requestOptions,
+      options: r?.options ?? options,
       data: r?.data ?? data,
       queryParameters: r?.queryParams ?? queryParams,
       cancelToken: r?.cancelToken ?? cancelToken,
@@ -548,7 +563,7 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
 
     final response = _dio.delete<Raw>(
       r?.path ?? _transformedPath,
-      options: r?.options ?? _requestOptions,
+      options: r?.options ?? options,
       data: r?.data ?? data,
       queryParameters: r?.queryParams ?? queryParams,
       cancelToken: r?.cancelToken ?? cancelToken,
@@ -728,7 +743,7 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
 
     final response = _dio.request<Raw>(
       r?.path ?? _transformedPath,
-      options: r?.options ?? _requestOptions,
+      options: r?.options ?? options,
       data: r?.data ?? data,
       queryParameters: r?.queryParams ?? queryParams,
       cancelToken: r?.cancelToken ?? cancelToken,

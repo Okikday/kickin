@@ -1,3 +1,8 @@
+## 0.0.1-dev.25
+- Added a LogOptions for normal network logs
+- Fixed issue where headers don't get propageted to requests
+- Improved network logs to display neatly
+
 ## 0.0.1-dev.24
 - Fixed issue with not resolving path merging properly
 - Improved netwok logging for debug
