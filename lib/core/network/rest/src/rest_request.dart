@@ -97,48 +97,50 @@ class KRestRequest<TDecoded> {
   KRequest<TDecoded> toRequest() => KRequest<TDecoded>.from(this);
 
   void _logRequest(LogOptions logOptions, String method) {
-    final StringBuffer buffer = StringBuffer();
+    final Map<String, dynamic> output = {};
 
-    // Cyan color for Request header
-    buffer.write('\x1B[36m[KApi] Request($method): $_transformedPath\x1B[0m');
-
-    if (logOptions.queryParams && queryParams != null && queryParams!.isNotEmpty) {
-      buffer.write('\n   Query: $queryParams');
+    if (logOptions.parts.contains(LogPart.queryParams) && queryParams != null) {
+      output['Query'] = queryParams;
+    }
+    if (logOptions.parts.contains(LogPart.requestBody) && data != null) {
+      output['Body'] = data;
+    }
+    if (logOptions.parts.contains(LogPart.requestHeaders) && headers != null) {
+      output['Headers'] = headers;
     }
 
-    if (logOptions.requestData && data != null) {
-      buffer.write('\n   Body(${data.runtimeType}): $data');
-    }
-
-    if (logOptions.headers && headers != null) {
-      buffer.write('\n   Headers: $headers');
-    }
-
-    print(buffer.toString());
+    NetworkLog.request('Request($method): $_transformedPath\n$output');
   }
 
-  void _logResponse<Raw>(LogOptions logOptions, String method, Response<Raw> result) {
+  void _logResponse<Raw>(LogOptions logOptions, String method, dynamic result) {
     final bool isOk = result.statusCode != null && result.statusCode! >= 200 && result.statusCode! < 300;
+    final Map<String, dynamic> output = {};
 
-    final String color = isOk ? '\x1B[32m' : '\x1B[31m'; // Green if OK, Red if BAD
-    final String reset = '\x1B[0m';
-
-    final StringBuffer buffer = StringBuffer();
-
-    buffer.write('$color[KApi] ${result.runtimeType}(${result.statusCode ?? 'ERR'}): $_transformedPath$reset');
-
-    if (logOptions.responseData) {
-      final type = result.data.runtimeType;
+    if (logOptions.parts.contains(LogPart.responseBody) && result is Response && result.data != null) {
       String rawData = result.data.toString();
 
       if (rawData.length > logOptions.maxLogLength) {
-        rawData = '${rawData.substring(0, logOptions.maxLogLength)}... [TRUNCATED]';
+        output['Data'] = '${rawData.substring(0, logOptions.maxLogLength)}... [TRUNCATED]';
+      } else {
+        output['Data'] = result.data;
       }
-
-      buffer.write('\n   Data($type): $rawData');
     }
 
-    print(buffer.toString());
+    if (logOptions.parts.contains(LogPart.responseHeaders) && result is Response) {
+      output['Headers'] = result.headers.map;
+    }
+
+    if (!isOk && logOptions.parts.contains(LogPart.errors) && result is KResponse && result.error != null) {
+      output['Error Details'] = result.error.toString();
+    }
+
+    final title = 'Response(${result.statusCode ?? 'ERR'}): $_transformedPath';
+
+    if (isOk) {
+      NetworkLog.success('$title\n$output');
+    } else {
+      NetworkLog.error('$title\n$output');
+    }
   }
 }
 
@@ -202,7 +204,7 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
     TDecoded Function(dynamic data, Response _)? decoder,
   }) => KGetRequest<TDecoded>(
     _api,
-    path: pathTransform?.call(_transformedPath) ?? _transformedPath,
+    path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -294,7 +296,7 @@ class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
     TDecoded Function(dynamic data, Response _)? decoder,
   }) => KPostRequest<TDecoded>(
     _api,
-    path: pathTransform?.call(_transformedPath) ?? _transformedPath,
+    path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -388,7 +390,7 @@ class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
     TDecoded Function(dynamic data, Response _)? decoder,
   }) => KPutRequest<TDecoded>(
     _api,
-    path: pathTransform?.call(_transformedPath) ?? _transformedPath,
+    path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -482,7 +484,7 @@ class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
     TDecoded Function(dynamic data, Response _)? decoder,
   }) => KPatchRequest<TDecoded>(
     _api,
-    path: pathTransform?.call(_transformedPath) ?? _transformedPath,
+    path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -572,7 +574,7 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
     TDecoded Function(dynamic data, Response _)? decoder,
   }) => KDeleteRequest<TDecoded>(
     _api,
-    path: pathTransform?.call(_transformedPath) ?? _transformedPath,
+    path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
@@ -666,7 +668,7 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
     bool? useBaseUrl,
   }) => KDownloadRequest<TDecoded>(
     _api,
-    path: pathTransform?.call(_transformedPath) ?? _transformedPath,
+    path: pathTransform?.call(path) ?? path,
     savePath: savePath ?? this.savePath,
     usePrimary: usePrimary ?? this.usePrimary,
     options: options ?? this.options,
@@ -754,7 +756,7 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
     TDecoded Function(dynamic data, Response _)? decoder,
   }) => KRequest<TDecoded>(
     _api,
-    path: pathTransform?.call(_transformedPath) ?? _transformedPath,
+    path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,

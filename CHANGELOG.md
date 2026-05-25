@@ -1,3 +1,7 @@
+## 0.0.1-dev.24
+- Fixed issue with not resolving path merging properly
+- Improved netwok logging for debug
+
 ## 0.0.1-dev.23
 - Updated documentation
 

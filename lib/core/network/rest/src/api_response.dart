@@ -1,6 +1,4 @@
-import 'dart:developer';
-
-import 'package:dio/dio.dart';
+part of '../rest_api_base.dart';
 
 class KResponse<Raw, Formatted> extends Response<Raw> {
   final Formatted Function(Raw data, Response<Raw> _)? decoder;

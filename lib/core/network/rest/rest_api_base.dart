@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
-import 'package:kickin/core/network/rest/models/log_options.dart';
+import 'package:kickin/core/network/rest/src/network_logger.dart';
 import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
-import 'package:kickin/core/network/rest/src/api_response.dart';
+
 import 'package:kickin/core/storage/hive/kickin_hive.dart';
 import 'package:kickin/core/storage/hive/src/hive.dart';
 import 'package:kickin/core/utilities/result.dart';
@@ -16,10 +17,11 @@ export 'package:dio/dio.dart' show CancelToken, Options, FileAccessMode;
 part 'src/api_monitor_mixin.dart';
 
 part 'src/rest_request.dart';
+part 'src/api_response.dart';
+
+part 'models/log_options.dart';
 
 part 'rest_api.dart';
-
-typedef Any = dynamic;
 
 /// =================================================
 /// ApiBase
@@ -57,7 +59,7 @@ abstract class KRestApiBase {
   /// =================================================
 
   /// Cache
-  final _cacheMap = <String, Any>{};
+  final _cacheMap = <String, dynamic>{};
   final _pendingWrites = Queue<String>(); // Keys waiting to be flushed
   Timer? _flushTimer;
   static const _flushDelay = Duration(milliseconds: 300);

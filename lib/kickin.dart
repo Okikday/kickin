@@ -1,5 +1,3 @@
-library;
-
 export 'core/network/rest/rest_api_base.dart'
     show
         KRestApi,
@@ -12,8 +10,10 @@ export 'core/network/rest/rest_api_base.dart'
         KPutRequest,
         CancelToken,
         Options,
-        FileAccessMode;
-export 'core/network/rest/src/api_response.dart' show KResponse;
+        FileAccessMode,
+        LogOptions,
+        LogPart,
+        KResponse;
 export 'core/base/base.dart'
     show
         KAsyncNotifierX,
@@ -54,7 +54,8 @@ export 'core/state_management/riverpod/riverpod.dart'
         StreamNotifier,
         KStringNotifier,
         KWatchNotifier,
-        WidgetRef;
+        WidgetRef,
+        ProviderScope;
 export 'core/storage/hive/kickin_hive.dart' show KHive;
 export 'core/utilities/result.dart' show KResult;
 export 'core/utilities/isolate.dart'
@@ -79,4 +80,3 @@ export 'widgets/misc/adaptive_image.dart' show KAdaptiveImage, KFilePath, ImageF
 export 'core/constants/constants.dart' show KCurves, KSpacing;
 
 export 'package:flutter_riverpod/misc.dart' show AsyncProviderListenable, ProviderListenable;
-export 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
