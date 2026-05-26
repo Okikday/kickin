@@ -6,6 +6,7 @@ enum RequestMethod { GET, POST, PATCH, PUT, DELETE, DOWNLOAD, REQUEST }
 
 class KRestRequest<TDecoded> {
   /// Shared request configuration used by every request wrapper in this file.
+  /// Mostly use static values to declare. You can use copyWith from the other kind of requests to make proper changes
   KRestRequest(
     this._api, {
     required this.path,
@@ -165,6 +166,18 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
     super._api, {
     required super.path,
     super.usePrimary,
+    super.useBaseUrl,
+    super.options,
+    super.cancelToken,
+    super.onReceiveProgress,
+    super.decoder,
+    super.logOptions,
+  });
+
+  KGetRequest._(
+    super._api, {
+    required super.path,
+    super.usePrimary,
     super.headers,
     super.data,
     super.options,
@@ -174,24 +187,23 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
     super.decoder,
     super.logOptions,
     super.useBaseUrl,
-    this.resolve,
   });
 
   static const method = 'GET';
 
-  /// This can be used to modify or replace the entire request operation
-  final FutureOr<KGetRequest<TDecoded>> Function(KGetRequest<TDecoded>)? resolve;
+  // /// This can be used to modify or replace the entire request operation
+  // final FutureOr<KGetRequest<TDecoded>> Function(KGetRequest<TDecoded>)? resolve;
 
   Future<KResponse<Raw, TDecoded>> _getResponse<Raw>(bool tryRun) async {
-    final r = resolve == null ? null : await resolve!(this);
+    //
 
     final response = _dio.get<Raw>(
-      r?.transformedPath ?? _transformedPath,
-      options: r?.options ?? options,
-      data: r?.data ?? data,
-      queryParameters: r?.queryParams ?? queryParams,
-      cancelToken: r?.cancelToken ?? cancelToken,
-      onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
+      _transformedPath,
+      options: options,
+      data: data,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
     );
     return tryRun ? _tryRunRequest(method, response: response) : _runRequest<Raw>(method, response: response);
   }
@@ -217,26 +229,22 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
     LogOptions? logOptions,
     bool? useBaseUrl,
     TDecoded Function(dynamic data, Response _)? decoder,
-  }) => KGetRequest<TDecoded>(
+  }) => KGetRequest<TDecoded>._(
     _api,
     path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
     queryParams: queryParams ?? this.queryParams,
-    options: headers != null ? options : (options ?? this.options),
+    options: (options ?? this.options)?.copyWith(headers: headers ?? this.headers),
     cancelToken: cancelToken ?? this.cancelToken,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
-    resolve: resolve,
     decoder: decoder ?? this.decoder,
     logOptions: logOptions ?? this.logOptions,
     useBaseUrl: useBaseUrl ?? this.useBaseUrl,
   );
 
-  factory KGetRequest.from(
-    KRestRequest<TDecoded> r, {
-    FutureOr<KGetRequest<TDecoded>> Function(KGetRequest<TDecoded>)? resolve,
-  }) => KGetRequest<TDecoded>(
+  factory KGetRequest.from(KRestRequest<TDecoded> r) => KGetRequest<TDecoded>._(
     r._api,
     path: r.path,
     usePrimary: r.usePrimary,
@@ -246,7 +254,6 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
     queryParams: r.queryParams,
     cancelToken: r.cancelToken,
     onReceiveProgress: r.onReceiveProgress,
-    resolve: resolve,
     decoder: r.decoder,
     useBaseUrl: r.useBaseUrl,
     logOptions: r.logOptions,
@@ -255,6 +262,18 @@ class KGetRequest<TDecoded> extends KRestRequest<TDecoded> {
 
 class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
   KPostRequest(
+    super._api, {
+    required super.path,
+    super.usePrimary,
+    super.options,
+    super.cancelToken,
+    super.onReceiveProgress,
+    this.onSendProgress,
+    super.decoder,
+    super.logOptions,
+    super.useBaseUrl,
+  });
+  KPostRequest._(
     super._api, {
     required super.path,
     super.usePrimary,
@@ -268,25 +287,21 @@ class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
     super.decoder,
     super.logOptions,
     super.useBaseUrl,
-    this.resolve,
   });
 
   static const method = 'POST';
 
   final void Function(int, int)? onSendProgress;
-  final FutureOr<KPostRequest<TDecoded>> Function(KPostRequest<TDecoded>)? resolve;
 
   Future<KResponse<Raw, TDecoded>> _postResponse<Raw>(bool tryRun) async {
-    final r = resolve == null ? null : await resolve!(this);
-
     final response = _dio.post<Raw>(
-      r?.transformedPath ?? _transformedPath,
-      options: r?.options ?? options,
-      data: r?.data ?? data,
-      queryParameters: r?.queryParams ?? queryParams,
-      cancelToken: r?.cancelToken ?? cancelToken,
-      onSendProgress: r?.onSendProgress ?? onSendProgress,
-      onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
+      _transformedPath,
+      options: options,
+      data: data,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return tryRun ? _tryRunRequest(method, response: response) : _runRequest<Raw>(method, response: response);
   }
@@ -309,27 +324,23 @@ class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
     LogOptions? logOptions,
     bool? useBaseUrl,
     TDecoded Function(dynamic data, Response _)? decoder,
-  }) => KPostRequest<TDecoded>(
+  }) => KPostRequest<TDecoded>._(
     _api,
     path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: headers != null ? options : (options ?? this.options),
+    options: (options ?? this.options)?.copyWith(headers: headers ?? this.headers),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
-    resolve: resolve,
     decoder: decoder ?? this.decoder,
     logOptions: logOptions ?? this.logOptions,
     useBaseUrl: useBaseUrl ?? this.useBaseUrl,
   );
 
-  factory KPostRequest.from(
-    KRestRequest<TDecoded> r, {
-    FutureOr<KPostRequest<TDecoded>> Function(KPostRequest<TDecoded>)? resolve,
-  }) => KPostRequest<TDecoded>(
+  factory KPostRequest.from(KRestRequest<TDecoded> r) => KPostRequest<TDecoded>._(
     r._api,
     path: r.path,
     usePrimary: r.usePrimary,
@@ -339,7 +350,6 @@ class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
     queryParams: r.queryParams,
     cancelToken: r.cancelToken,
     onReceiveProgress: r.onReceiveProgress,
-    resolve: resolve,
     decoder: r.decoder,
     useBaseUrl: r.useBaseUrl,
     logOptions: r.logOptions,
@@ -349,6 +359,22 @@ class KPostRequest<TDecoded> extends KRestRequest<TDecoded> {
 /// PUT request wrapper with send-progress support and optional response decoding.
 class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
   KPutRequest(
+    super._api, {
+    required super.path,
+    super.usePrimary,
+    // super.headers,
+    // super.data,
+    super.decoder,
+    super.options,
+    // super.queryParams,
+    super.cancelToken,
+    super.onReceiveProgress,
+    this.onSendProgress,
+    super.logOptions,
+    super.useBaseUrl,
+    // this.resolve,
+  });
+  KPutRequest._(
     super._api, {
     required super.path,
     super.usePrimary,
@@ -362,25 +388,21 @@ class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
     this.onSendProgress,
     super.logOptions,
     super.useBaseUrl,
-    this.resolve,
   });
 
   static const method = 'PUT';
 
   final void Function(int, int)? onSendProgress;
-  final FutureOr<KPutRequest<TDecoded>> Function(KPutRequest<TDecoded>)? resolve;
 
   Future<KResponse<Raw, TDecoded>> _putResponse<Raw>(bool tryRun) async {
-    final r = resolve == null ? null : await resolve!(this);
-
     final response = _dio.put<Raw>(
-      r?.transformedPath ?? _transformedPath,
-      options: r?.options ?? options,
-      data: r?.data ?? data,
-      queryParameters: r?.queryParams ?? queryParams,
-      cancelToken: r?.cancelToken ?? cancelToken,
-      onSendProgress: r?.onSendProgress ?? onSendProgress,
-      onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
+      _transformedPath,
+      options: options,
+      data: data,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return tryRun ? _tryRunRequest(method, response: response) : _runRequest<Raw>(method, response: response);
   }
@@ -403,27 +425,23 @@ class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
     LogOptions? logOptions,
     bool? useBaseUrl,
     TDecoded Function(dynamic data, Response _)? decoder,
-  }) => KPutRequest<TDecoded>(
+  }) => KPutRequest<TDecoded>._(
     _api,
     path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: headers != null ? options : (options ?? this.options),
+    options: (options ?? this.options)?.copyWith(headers: headers ?? this.headers),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
-    resolve: resolve,
     decoder: decoder ?? this.decoder,
     logOptions: logOptions ?? this.logOptions,
     useBaseUrl: useBaseUrl ?? this.useBaseUrl,
   );
 
-  factory KPutRequest.from(
-    KRestRequest<TDecoded> r, {
-    FutureOr<KPutRequest<TDecoded>> Function(KPutRequest<TDecoded>)? resolve,
-  }) => KPutRequest<TDecoded>(
+  factory KPutRequest.from(KRestRequest<TDecoded> r) => KPutRequest<TDecoded>._(
     r._api,
     path: r.path,
     usePrimary: r.usePrimary,
@@ -433,7 +451,6 @@ class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
     queryParams: r.queryParams,
     cancelToken: r.cancelToken,
     onReceiveProgress: r.onReceiveProgress,
-    resolve: resolve,
     decoder: r.decoder,
     useBaseUrl: r.useBaseUrl,
     logOptions: r.logOptions,
@@ -442,7 +459,7 @@ class KPutRequest<TDecoded> extends KRestRequest<TDecoded> {
 
 /// PATCH request wrapper with send-progress support and optional response decoding.
 class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
-  KPatchRequest(
+  KPatchRequest._(
     super._api, {
     required super.path,
     super.usePrimary,
@@ -456,25 +473,33 @@ class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
     super.decoder,
     super.logOptions,
     super.useBaseUrl,
-    this.resolve,
+  });
+  KPatchRequest(
+    super._api, {
+    required super.path,
+    super.usePrimary,
+    super.decoder,
+    super.options,
+    super.cancelToken,
+    super.onReceiveProgress,
+    this.onSendProgress,
+    super.logOptions,
+    super.useBaseUrl,
   });
 
   static const method = 'PATCH';
 
   final void Function(int, int)? onSendProgress;
-  final FutureOr<KPatchRequest<TDecoded>> Function(KPatchRequest<TDecoded>)? resolve;
 
   Future<KResponse<Raw, TDecoded>> _patchResponse<Raw>(bool tryRun) async {
-    final r = resolve == null ? null : await resolve!(this);
-
     final response = _dio.patch<Raw>(
-      r?.transformedPath ?? _transformedPath,
-      options: r?.options ?? options,
-      data: r?.data ?? data,
-      queryParameters: r?.queryParams ?? queryParams,
-      cancelToken: r?.cancelToken ?? cancelToken,
-      onSendProgress: r?.onSendProgress ?? onSendProgress,
-      onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
+      _transformedPath,
+      options: options,
+      data: data,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return tryRun ? _tryRunRequest(method, response: response) : _runRequest<Raw>(method, response: response);
   }
@@ -497,27 +522,23 @@ class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
     LogOptions? logOptions,
     bool? useBaseUrl,
     TDecoded Function(dynamic data, Response _)? decoder,
-  }) => KPatchRequest<TDecoded>(
+  }) => KPatchRequest<TDecoded>._(
     _api,
     path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: headers != null ? options : (options ?? this.options),
+    options: (options ?? this.options)?.copyWith(headers: headers ?? this.headers),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
     onSendProgress: onSendProgress ?? this.onSendProgress,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
-    resolve: resolve,
     decoder: decoder ?? this.decoder,
     logOptions: logOptions ?? this.logOptions,
     useBaseUrl: useBaseUrl ?? this.useBaseUrl,
   );
 
-  factory KPatchRequest.from(
-    KRestRequest<TDecoded> r, {
-    FutureOr<KPatchRequest<TDecoded>> Function(KPatchRequest<TDecoded>)? resolve,
-  }) => KPatchRequest<TDecoded>(
+  factory KPatchRequest.from(KRestRequest<TDecoded> r) => KPatchRequest<TDecoded>._(
     r._api,
     path: r.path,
     usePrimary: r.usePrimary,
@@ -527,7 +548,6 @@ class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
     queryParams: r.queryParams,
     cancelToken: r.cancelToken,
     onReceiveProgress: r.onReceiveProgress,
-    resolve: resolve,
     decoder: r.decoder,
     useBaseUrl: r.useBaseUrl,
     logOptions: r.logOptions,
@@ -536,7 +556,7 @@ class KPatchRequest<TDecoded> extends KRestRequest<TDecoded> {
 
 /// DELETE request wrapper with optional response decoding.
 class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
-  KDeleteRequest(
+  KDeleteRequest._(
     super._api, {
     required super.path,
     super.usePrimary,
@@ -549,22 +569,29 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
     super.decoder,
     super.logOptions,
     super.useBaseUrl,
-    this.resolve,
+  });
+
+  KDeleteRequest(
+    super._api, {
+    required super.path,
+    super.usePrimary,
+    super.decoder,
+    super.options,
+    super.cancelToken,
+    super.onReceiveProgress,
+    super.logOptions,
+    super.useBaseUrl,
   });
 
   static const method = 'DELETE';
 
-  final FutureOr<KDeleteRequest<TDecoded>> Function(KDeleteRequest<TDecoded>)? resolve;
-
   Future<KResponse<Raw, TDecoded>> _deleteResponse<Raw>(bool tryRun) async {
-    final r = resolve == null ? null : await resolve!(this);
-
     final response = _dio.delete<Raw>(
-      r?.transformedPath ?? _transformedPath,
-      options: r?.options ?? options,
-      data: r?.data ?? data,
-      queryParameters: r?.queryParams ?? queryParams,
-      cancelToken: r?.cancelToken ?? cancelToken,
+      _transformedPath,
+      options: options,
+      data: data,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
     );
     return tryRun ? _tryRunRequest(method, response: response) : _runRequest<Raw>(method, response: response);
   }
@@ -585,16 +612,15 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
     LogOptions? logOptions,
     bool? useBaseUrl,
     TDecoded Function(dynamic data, Response _)? decoder,
-  }) => KDeleteRequest<TDecoded>(
+  }) => KDeleteRequest<TDecoded>._(
     _api,
     path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
-    options: headers != null ? options : (options ?? this.options),
+    options: (options ?? this.options)?.copyWith(headers: headers ?? this.headers),
     cancelToken: cancelToken ?? this.cancelToken,
     queryParams: queryParams ?? this.queryParams,
-    resolve: resolve,
     decoder: decoder ?? this.decoder,
     logOptions: logOptions ?? this.logOptions,
     useBaseUrl: useBaseUrl ?? this.useBaseUrl,
@@ -603,7 +629,7 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
   factory KDeleteRequest.from(
     KRestRequest<TDecoded> r, {
     FutureOr<KDeleteRequest<TDecoded>> Function(KDeleteRequest<TDecoded>)? resolve,
-  }) => KDeleteRequest<TDecoded>(
+  }) => KDeleteRequest<TDecoded>._(
     r._api,
     path: r.path,
     usePrimary: r.usePrimary,
@@ -613,7 +639,6 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
     queryParams: r.queryParams,
     cancelToken: r.cancelToken,
     onReceiveProgress: r.onReceiveProgress,
-    resolve: resolve,
     decoder: r.decoder,
     useBaseUrl: r.useBaseUrl,
     logOptions: r.logOptions,
@@ -622,6 +647,20 @@ class KDeleteRequest<TDecoded> extends KRestRequest<TDecoded> {
 
 class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
   KDownloadRequest(
+    super._api, {
+    required super.path,
+    this.savePath,
+    super.usePrimary,
+    super.options,
+    super.cancelToken,
+    super.onReceiveProgress,
+    this.fileAccessMode = FileAccessMode.write,
+    this.deleteOnError = true,
+    this.lengthHeader = Headers.contentLengthHeader,
+    super.logOptions,
+    super.useBaseUrl,
+  });
+  KDownloadRequest._(
     super._api, {
     required super.path,
     required this.savePath,
@@ -635,7 +674,6 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
     this.lengthHeader = Headers.contentLengthHeader,
     super.logOptions,
     super.useBaseUrl,
-    this.resolve,
   });
 
   static const method = 'DOWNLOAD';
@@ -643,22 +681,19 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
   final dynamic savePath;
   final FileAccessMode fileAccessMode;
   final bool deleteOnError;
-  final FutureOr<KDownloadRequest<TDecoded>> Function(KDownloadRequest<TDecoded>)? resolve;
   final String lengthHeader;
 
   Future<KResponse<dynamic, TDecoded>> _downloadResponse(bool tryRun) async {
-    final r = resolve == null ? null : await resolve!(this);
-
     final response = _dio.download(
-      r?.transformedPath ?? _transformedPath,
+      _transformedPath,
       savePath,
-      options: r?.options ?? options,
-      data: r?.data ?? data,
+      options: options,
+      data: data,
       fileAccessMode: fileAccessMode,
-      queryParameters: r?.queryParams ?? queryParams,
-      cancelToken: r?.cancelToken ?? cancelToken,
-      lengthHeader: r?.lengthHeader ?? lengthHeader,
-      onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      lengthHeader: lengthHeader,
+      onReceiveProgress: onReceiveProgress,
       deleteOnError: deleteOnError,
     );
     return tryRun ? _tryRunRequest(method, response: response) : _runRequest(method, response: response);
@@ -682,17 +717,16 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
     FileAccessMode? fileAccessMode,
     LogOptions? logOptions,
     bool? useBaseUrl,
-  }) => KDownloadRequest<TDecoded>(
+  }) => KDownloadRequest<TDecoded>._(
     _api,
     path: pathTransform?.call(path) ?? path,
     savePath: savePath ?? this.savePath,
     usePrimary: usePrimary ?? this.usePrimary,
-    // options: headers != null ? options : (options ?? this.options),
+    // options: (options ?? this.options)?.copyWith(headers: headers ?? this.headers),
     options: options ?? this.options,
     queryParams: queryParams ?? this.queryParams,
     cancelToken: cancelToken ?? this.cancelToken,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
-    resolve: resolve,
     deleteOnError: deleteOnError ?? this.deleteOnError,
     fileAccessMode: fileAccessMode ?? this.fileAccessMode,
     lengthHeader: lengthHeader ?? this.lengthHeader,
@@ -705,7 +739,7 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
     required dynamic savePath,
     String lengthHeader = Headers.contentLengthHeader,
     FutureOr<KDownloadRequest<TDecoded>> Function(KDownloadRequest<TDecoded>)? resolve,
-  }) => KDownloadRequest<TDecoded>(
+  }) => KDownloadRequest<TDecoded>._(
     r._api,
     path: r.path,
     usePrimary: r.usePrimary,
@@ -714,7 +748,6 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
     queryParams: r.queryParams,
     cancelToken: r.cancelToken,
     onReceiveProgress: r.onReceiveProgress,
-    resolve: resolve,
     lengthHeader: lengthHeader,
     useBaseUrl: r.useBaseUrl,
     logOptions: r.logOptions,
@@ -723,6 +756,19 @@ class KDownloadRequest<TDecoded> extends KRestRequest<TDecoded> {
 
 class KRequest<TDecoded> extends KRestRequest<TDecoded> {
   KRequest(
+    super._api, {
+    required super.path,
+    super.usePrimary,
+    super.decoder,
+    super.options,
+    super.cancelToken,
+    super.onReceiveProgress,
+    this.onSendProgress,
+    super.logOptions,
+    super.useBaseUrl,
+  });
+
+  KRequest._(
     super._api, {
     required super.path,
     super.usePrimary,
@@ -736,25 +782,21 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
     this.onSendProgress,
     super.logOptions,
     super.useBaseUrl,
-    this.resolve,
   });
 
   static const method = 'REQUEST';
 
   final void Function(int, int)? onSendProgress;
-  final FutureOr<KRequest<TDecoded>> Function(KRequest<TDecoded>)? resolve;
 
   Future<KResponse<Raw, TDecoded>> _request<Raw>(bool tryRun) async {
-    final r = resolve == null ? null : await resolve!(this);
-
     final response = _dio.request<Raw>(
-      r?.transformedPath ?? _transformedPath,
-      options: r?.options ?? options,
-      data: r?.data ?? data,
-      queryParameters: r?.queryParams ?? queryParams,
-      cancelToken: r?.cancelToken ?? cancelToken,
-      onSendProgress: r?.onSendProgress ?? onSendProgress,
-      onReceiveProgress: r?.onReceiveProgress ?? onReceiveProgress,
+      _transformedPath,
+      options: options,
+      data: data,
+      queryParameters: queryParams,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
     );
     return tryRun ? _tryRunRequest(method, response: response) : _runRequest<Raw>(method, response: response);
   }
@@ -776,17 +818,16 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
     LogOptions? logOptions,
     bool? useBaseUrl,
     TDecoded Function(dynamic data, Response _)? decoder,
-  }) => KRequest<TDecoded>(
+  }) => KRequest<TDecoded>._(
     _api,
     path: pathTransform?.call(path) ?? path,
     usePrimary: usePrimary ?? this.usePrimary,
     headers: headers ?? this.headers,
     data: data ?? this.data,
     queryParams: queryParams ?? this.queryParams,
-    options: headers != null ? options : (options ?? this.options),
+    options: (options ?? this.options)?.copyWith(headers: headers ?? this.headers),
     cancelToken: cancelToken ?? this.cancelToken,
     onReceiveProgress: onReceiveProgress ?? this.onReceiveProgress,
-    resolve: resolve,
     decoder: decoder ?? this.decoder,
     logOptions: logOptions ?? this.logOptions,
     useBaseUrl: useBaseUrl ?? this.useBaseUrl,
@@ -795,7 +836,7 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
   factory KRequest.from(
     KRestRequest<TDecoded> r, {
     FutureOr<KRequest<TDecoded>> Function(KRequest<TDecoded>)? resolve,
-  }) => KRequest<TDecoded>(
+  }) => KRequest<TDecoded>._(
     r._api,
     path: r.path,
     usePrimary: r.usePrimary,
@@ -805,7 +846,6 @@ class KRequest<TDecoded> extends KRestRequest<TDecoded> {
     queryParams: r.queryParams,
     cancelToken: r.cancelToken,
     onReceiveProgress: r.onReceiveProgress,
-    resolve: resolve,
     decoder: r.decoder,
     useBaseUrl: r.useBaseUrl,
     logOptions: r.logOptions,

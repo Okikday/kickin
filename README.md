@@ -36,11 +36,10 @@ A unified layer for all remote communication, adaptable to different protocols.
       late final _getUser = KGetRequest(
         this, 
         path: '/user', 
-        resolve: (r) async => r.copyWith(headers: await loadAuthHeaders()),
         decoder: (data, _) => User.fromJson(data),
       );
 
-      Future getUser () => _getUser.get();
+      Future<User?> getUser () async=> _getUser.copyWith(headers: await loadAuthHeaders()).get();
     }
 
     // Call securely and retrieve the decoded data
@@ -144,7 +143,7 @@ Add the package to your app dependencies:
 
 ```yaml
 dependencies:
-  kickin: 0.0.1-dev.27
+  kickin: 0.0.1-dev.28
 ```
 
 Then import the package root API where needed:

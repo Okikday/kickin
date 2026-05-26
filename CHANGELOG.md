@@ -1,3 +1,6 @@
+## 0.0.1-dev.28
+- Adjust API structure by changing how params are declared in the KRestRequest classes
+
 ## 0.0.1-dev.27
 - Fixed the issue with headers not properly propagating for the requests
 
