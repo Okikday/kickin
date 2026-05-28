@@ -11,57 +11,12 @@ Zero lock-in. While Kickin provides opinionated wrappers for popular tools, it i
 ### 🌐 Network
 A unified layer for all remote communication, adaptable to different protocols.
 
-* **REST APIs**
-  A robust and extensible wrapper over Dio to handle HTTP requests gracefully with structured error handling, caching, logging, and decoding.
-  * **Key Classes:** `KRestApiBase`, `KRestApi`, `KRestRequest`, `KResponse`
-  * **Usage:**
-    ```dart
-    class MyApi extends KRestApiBase {
-      static final kick = MyApi._();
-      MyApi._();
-
-      // make sure to initialize in main()
-      // e.g. MyApi.kick.initialize(baseUrl: 'https://api.myapp.com', logOptions: LogOptions.debugAll());
-      
-      late final users = UsersApi(this);
-    }
-    
-    class UsersApi extends KRestApi<Map<String, dynamic>> {
-      UsersApi(super.parent);
-
-      // You can also choose to cache your data as they come in
-      
-
-      /// You can also make this a getter instead of late final incase you need to pass a data(body)
-      late final _getUser = KGetRequest(
-        this, 
-        path: '/user', 
-        decoder: (data, _) => User.fromJson(data),
-      );
-
-      Future<User?> getUser () async=> _getUser.copyWith(headers: await loadAuthHeaders()).get();
-    }
-
-    // Call securely and retrieve the decoded data
-    final user = await MyApi.kick.users.getUser(); 
-    ```
+Check https://pub.dev/packages/kickin_network
 
 ### 💾 Storage
 A unified abstraction for local persistent storage, architected to support multiple drivers smoothly.
 
-* **Hive**
-  A fast key-value storage implementation powered by Hive. Includes app-level, secure, and lazy options.
-  * **Key Classes:** `KHive`, `KSecureHive`, `KLazyHive`
-  * **Usage:**
-    ```dart
-    // Initialize at app startup
-    enum KHiveKeys{theme}
-    await KHive.on.initialize(initApp: true);
-
-    // Save and retrieve anywhere safely
-    await KHive.on.app.setData(key: KHiveKeys.theme.name, value: 'dark');
-    final theme = KHive.on.app.getData(key: 'theme'); // or KHiveKeys.theme.name
-    ```
+Check https://pub.dev/packages/kickin_storage
 
 ### 🧠 State Management
 Streamlined, ergonomic, and boilerplate-free APIs to bind your favorite state management solutions to the UI.
@@ -143,7 +98,7 @@ Add the package to your app dependencies:
 
 ```yaml
 dependencies:
-  kickin: 0.0.1-dev.28
+  kickin: 0.0.1-dev.29
 ```
 
 Then import the package root API where needed:

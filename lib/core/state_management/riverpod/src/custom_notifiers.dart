@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kickin/core/storage/hive/default_hive_box_names.dart';
-import 'package:kickin/core/storage/hive/src/hive.dart';
+import 'package:kickin/core/state_management/riverpod/riverpod.dart';
 import 'package:kickin/core/utilities/result.dart';
+import 'package:kickin_storage/kickin_storage.dart';
 
 export 'package:flutter_riverpod/flutter_riverpod.dart';
 

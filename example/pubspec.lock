@@ -226,10 +226,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_secure_storage
-      sha256: d2a6ac2df7353f5ca47eb159a5407c1dba7ec48ca0e02dc38c9ff4d29447b261
+      sha256: "7686b1d6a29985dcbb808c59518226e603e3bfa7c0ddfd1a0d00e4cda77c868e"
       url: "https://pub.dev"
     source: hosted
-    version: "10.3.0"
+    version: "10.3.1"
   flutter_secure_storage_darwin:
     dependency: transitive
     description:
@@ -352,6 +352,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  internet_connection_checker_plus:
+    dependency: transitive
+    description:
+      name: internet_connection_checker_plus
+      sha256: "64d938ddd9638ceef31aa3db84191c3fada44d3c7c8a1132662feedb852f951e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.0"
   io:
     dependency: transitive
     description:
@@ -398,7 +406,23 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1-dev.24"
+    version: "0.0.1-dev.28"
+  kickin_network:
+    dependency: transitive
+    description:
+      name: kickin_network
+      sha256: "0d667b93782d9c0dcb4df50c840f0cc6deaf9ef1340bb05dbacda71e4cc2701c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1-dev.2"
+  kickin_storage:
+    dependency: transitive
+    description:
+      name: kickin_storage
+      sha256: b43502e4e9bafa3627fae74639eb05fb2a9291604ce29145e762c136b874b0b7
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1-dev.3"
   leak_tracker:
     dependency: transitive
     description:

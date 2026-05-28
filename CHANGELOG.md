@@ -1,3 +1,6 @@
+## 0.0.1-dev.29
+- Abstracted away kickin_network and kickin_storage
+
 ## 0.0.1-dev.28
 - Adjust API structure by changing how params are declared in the KRestRequest classes
 

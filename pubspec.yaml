@@ -1,6 +1,6 @@
 name: kickin
 description: "A Flutter package that makes developments easier by providing commonly used utilities and widgets with just simple initialization.(In Progress)"
-version: 0.0.1-dev.28
+version: 0.0.1-dev.29
 homepage: https://github.com/okikday
 repository: https://github.com/okikday/kickin
 
@@ -17,6 +17,8 @@ dependencies:
   flutter_riverpod: ^3.3.1
   flutter_secure_storage: ^10.3.0
   hive_ce_flutter: ^2.3.4
+  kickin_network: ^0.0.1-dev.2
+  kickin_storage: ^0.0.1-dev.3
   logger: ^2.7.0
   uuid: ^4.5.3
 
