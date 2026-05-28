@@ -11,12 +11,12 @@ Zero lock-in. While Kickin provides opinionated wrappers for popular tools, it i
 ### 🌐 Network
 A unified layer for all remote communication, adaptable to different protocols.
 
-Check https://pub.dev/packages/kickin_network
+Check [kickin_network](https://pub.dev/packages/kickin_network)
 
 ### 💾 Storage
 A unified abstraction for local persistent storage, architected to support multiple drivers smoothly.
 
-Check https://pub.dev/packages/kickin_storage
+Check [kickin_storage](https://pub.dev/packages/kickin_storage)
 
 ### 🧠 State Management
 Streamlined, ergonomic, and boilerplate-free APIs to bind your favorite state management solutions to the UI.
